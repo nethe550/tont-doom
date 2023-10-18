@@ -111,4 +111,4 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'Main'
+mainClassName = 'game.Main'
