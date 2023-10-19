@@ -1,6 +1,7 @@
 package engine.graph;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.system.MemoryStack;
 
 import java.util.*;
@@ -19,22 +20,31 @@ public class Uniforms {
 
     public void createUniform(String uniformName) {
         int uniformLocation = glGetUniformLocation(programID, uniformName);
-        System.out.println(uniformLocation);
         if (uniformLocation < 0) throw new RuntimeException("Failed to locate uniform \"" + uniformName + "\" in shader program [" + programID + "]");
         uniforms.put(uniformName, uniformLocation);
     }
 
-    public void setUniform(String uniformName, float value) {
+    public boolean hasUniform(String uniformName) {
+        return uniforms.containsKey(uniformName);
+    }
+
+    private int getUniformLocation(String uniformName) {
         Integer location = uniforms.get(uniformName);
         if (location == null) throw new RuntimeException("Failed to find uniform \"" + uniformName + "\"");
-        glUniform1f(location, value);
+        return location.intValue();
+    }
+
+    public void setUniform(String uniformName, float value) {
+        glUniform1f(getUniformLocation(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, Vector2f value) {
+        glUniform2fv(getUniformLocation(uniformName), new float[] { value.x, value.y });
     }
 
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            Integer location = uniforms.get(uniformName);
-            if (location == null) throw new RuntimeException("Failed to find uniform \"" + uniformName + "\"");
-            glUniformMatrix4fv(location, false, value.get(stack.mallocFloat(16)));
+            glUniformMatrix4fv(getUniformLocation(uniformName), false, value.get(stack.mallocFloat(16)));
         }
     }
 

@@ -1,11 +1,10 @@
 package game;
 
 import engine.*;
-import engine.graph.Mesh;
-import engine.graph.Model;
-import engine.graph.Render;
+import engine.graph.*;
 import engine.scene.Entity;
 import engine.scene.Scene;
+import engine.util.Util;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -18,17 +17,9 @@ public class Main implements IAppLogic {
 
     // = Entities ============== //
 
-    private Entity cubeEntity;
-    private final String cubeEntityID = "cube-entity";
-
-    private List<Mesh> cubeMeshes;
-    private Mesh cubeMesh;
-    float[] cubeMeshPositions;
-    float[] cubeMeshColors;
-    int[] cubeMeshIndices;
-
-    private Model cubeModel;
-    private final String cubeModelID = "cube-model";
+    private final String turretModelID = "turret-model";
+    private final String turretEntityID = "turret-entity";
+    private Entity turretEntity;
 
     // ========================= //
 
@@ -48,53 +39,24 @@ public class Main implements IAppLogic {
 
     @Override
     public void init(Window window, Scene scene, Render render) {
-        cubeMeshPositions = new float[] {
-                -0.5f,  0.5f,  0.5f, // 0
-                -0.5f, -0.5f,  0.5f, // 1
-                 0.5f, -0.5f,  0.5f, // 2
-                 0.5f,  0.5f,  0.5f, // 3
-                -0.5f,  0.5f, -0.5f, // 4
-                 0.5f,  0.5f, -0.5f, // 5
-                -0.5f, -0.5f, -0.5f, // 6
-                 0.5f, -0.5f, -0.5f, // 7
-        };
-        cubeMeshColors = new float[] {
-                0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 0.5f,
-                0.0f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.0f,
-                0.5f, 0.0f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.0f, 0.0f, 0.0f
-        };
-        cubeMeshIndices = new int[] {
-// CLOCKWISE
-//                1, 0, 3, 3, 2, 1, // front
-//                0, 4, 5, 5, 3, 0, // top
-//                2, 3, 5, 5, 7, 2, // right
-//                6, 4, 0, 0, 1, 6, // left
-//                2, 7, 6, 6, 1, 2, // bottom
-//                5, 4, 7, 7, 4, 6, // back
+        Material turretMaterial = new Material();
 
-// ANTICLOCKWISE
-                0, 1, 3, 3, 1, 2, // front
-                4, 0, 3, 5, 4, 3, // top
-                3, 2, 7, 5, 3, 7, // right
-                6, 1, 0, 6, 0, 4, // left
-                2, 1, 6, 2, 6, 7, // bottom
-                7, 6, 4, 7, 4, 5, // back
-        };
-        cubeMeshes = new ArrayList<>();
-        cubeMesh = new Mesh(cubeMeshPositions, cubeMeshColors, cubeMeshIndices);
-        cubeMeshes.add(cubeMesh);
+        Texture texture = scene.getTextureCache().createTexture("models/turret.png");
+        turretMaterial.setTexturePath(texture.getTexturePath());
 
-        cubeModel = new Model(cubeModelID, cubeMeshes);
-        scene.addModel(cubeModel);
+        List<Material> turretMaterials = new ArrayList<>();
+        turretMaterials.add(turretMaterial);
 
-        cubeEntity = new Entity(cubeEntityID, cubeModelID);
-        cubeEntity.setPosition(0, 0, -2f);
-        scene.addEntity(cubeEntity);
+        Mesh turretMesh = new Mesh(Util.loadOBJMeshData(Main.class, "models/turret.obj"));
+        turretMaterial.getMeshes().add(turretMesh);
+
+        Model turretModel = new Model(turretModelID, turretMaterials);
+        scene.addModel(turretModel);
+
+        turretEntity = new Entity(turretEntityID, turretModel.getID());
+        turretEntity.setPosition(0f, -1f, -3f);
+        turretEntity.setRotation(0f, 1f, 0f, (float) Math.toRadians(135));
+        scene.addEntity(turretEntity);
     }
 
     @Override
@@ -111,9 +73,9 @@ public class Main implements IAppLogic {
 
         displInc.mul(diffTimeMillis / 100.0f);
 
-        Vector3f entitypos = cubeEntity.getPosition();
-        cubeEntity.setPosition(displInc.x + entitypos.x, displInc.y + entitypos.y, displInc.z + entitypos.z, true);
-        cubeEntity.setScale(cubeEntity.getScale() + displInc.w, true);
+        Vector3f entitypos = turretEntity.getPosition();
+        turretEntity.setPosition(displInc.x + entitypos.x, displInc.y + entitypos.y, displInc.z + entitypos.z, true);
+        turretEntity.setScale(turretEntity.getScale() + displInc.w, true);
     }
 
     @Override
@@ -121,7 +83,7 @@ public class Main implements IAppLogic {
 
         rotation += 1.5;
         if (rotation > 360) rotation = 0;
-        cubeEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
+        turretEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
     }
 
 }

@@ -8,20 +8,20 @@ public class Model {
 
     private final String id;
     private List<Entity> entities;
-    private List<Mesh> meshes;
+    private List<Material> materials;
 
-    public Model(String id, List<Mesh> meshes) {
+    public Model(String id, List<Material> materials) {
         this.id = id;
-        this.meshes = meshes;
         entities = new ArrayList<>();
+        this.materials = materials;
     }
 
     public void cleanup() {
-        meshes.forEach(Mesh::cleanup);
+        materials.forEach(Material::cleanup);
     }
 
     public List<Entity> getEntities() { return entities; }
     public String getID() { return id; }
-    public List<Mesh> getMeshes() { return meshes; }
+    public List<Material> getMaterials() { return materials; }
 
 }

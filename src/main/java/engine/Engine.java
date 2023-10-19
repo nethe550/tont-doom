@@ -64,7 +64,7 @@ public class Engine {
             if (deltaUpdate >= 1) {
                 long diffTimeMillis = now - updateTime;
                 appLogic.update(window, scene, diffTimeMillis);
-                render.update(diffTimeMillis);
+                render.update(window.getWidth(), window.getHeight(), diffTimeMillis);
                 updateTime = now;
                 deltaUpdate--;
             }

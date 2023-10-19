@@ -12,6 +12,8 @@ public class Render {
 
     public Render() {
         GL.createCapabilities();
+        glEnable(GL_DEPTH_TEST);
+        glFrontFace(GL_CCW);
         sceneRender = new SceneRender();
     }
 
@@ -19,8 +21,8 @@ public class Render {
 
     }
 
-    public void update(float diffTimeMillis) {
-        sceneRender.update(diffTimeMillis);
+    public void update(int width, int height, float diffTimeMillis) {
+        sceneRender.update(diffTimeMillis, width, height);
     }
 
     public void render(Window window, Scene scene) {
