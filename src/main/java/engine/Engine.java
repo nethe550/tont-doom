@@ -25,7 +25,7 @@ public class Engine {
         targetUPS = opts.ups;
         this.appLogic = appLogic;
         render = new Render();
-        scene = new Scene();
+        scene = new Scene(window.getWidth(), window.getHeight());
         appLogic.init(window, scene, render);
         running = true;
     }
@@ -38,7 +38,7 @@ public class Engine {
     }
 
     private void resize() {
-
+        scene.resize(window.getWidth(), window.getHeight());
     }
 
     private void run() {
@@ -47,7 +47,7 @@ public class Engine {
         float timeU = 1000.0f / targetUPS;
         float timeR = targetFPS > 0 ? 1000.0f / targetFPS : 0;
         float deltaUpdate = 0;
-        float deltaFps = 0;
+        float deltaFPS = 0;
 
         long updateTime = time;
         while (running && !window.windowShouldClose()) {
@@ -55,9 +55,9 @@ public class Engine {
 
             long now = System.currentTimeMillis();
             deltaUpdate += (now - time) / timeU;
-            deltaFps += (now - time) / timeR;
+            deltaFPS += (now - time) / timeR;
 
-            if (targetFPS <= 0 || deltaFps >= 1) {
+            if (targetFPS <= 0 || deltaFPS >= 1) {
                 appLogic.input(window, scene, now - time);
             }
 
@@ -68,9 +68,9 @@ public class Engine {
                 deltaUpdate--;
             }
 
-            if (targetFPS <= 0 || deltaFps >= 1) {
+            if (targetFPS <= 0 || deltaFPS >= 1) {
                 render.render(window, scene);
-                deltaFps--;
+                deltaFPS--;
                 window.update();
             }
             time = now;

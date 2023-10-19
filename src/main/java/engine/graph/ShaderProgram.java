@@ -16,7 +16,7 @@ public class ShaderProgram {
         programID = glCreateProgram();
         if (programID == 0) throw new RuntimeException("Failed to create shader program.");
 
-        List<Integer> shaderModules = new ArrayList<Integer>();
+        List<Integer> shaderModules = new ArrayList<>();
         shaderModuleDataList.forEach(s -> {
             shaderModules.add(createShader(Util.readFile(ShaderProgram.class, s.shaderFile), s.shaderType));
         });
