@@ -32,7 +32,7 @@ public class Main implements IAppLogic {
 
     // ========================= //
 
-    private Vector4f displInc = new Vector4f();
+    private final Vector4f displInc = new Vector4f();
     private float rotation = 0.0f;
 
     public static void main(String[] args) {
@@ -118,6 +118,7 @@ public class Main implements IAppLogic {
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
+
         rotation += 1.5;
         if (rotation > 360) rotation = 0;
         cubeEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));

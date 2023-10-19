@@ -7,9 +7,10 @@ out vec3 outColor;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelMatrix;
+uniform float timeElapsed;
 
 void main()
 {
     gl_Position = projectionMatrix * modelMatrix * vec4(position, 1.0);
-    outColor = color;
+    outColor = color * (sin(timeElapsed * 0.001) * 0.4 + 0.6);
 }

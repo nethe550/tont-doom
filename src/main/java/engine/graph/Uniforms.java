@@ -19,8 +19,15 @@ public class Uniforms {
 
     public void createUniform(String uniformName) {
         int uniformLocation = glGetUniformLocation(programID, uniformName);
+        System.out.println(uniformLocation);
         if (uniformLocation < 0) throw new RuntimeException("Failed to locate uniform \"" + uniformName + "\" in shader program [" + programID + "]");
         uniforms.put(uniformName, uniformLocation);
+    }
+
+    public void setUniform(String uniformName, float value) {
+        Integer location = uniforms.get(uniformName);
+        if (location == null) throw new RuntimeException("Failed to find uniform \"" + uniformName + "\"");
+        glUniform1f(location, value);
     }
 
     public void setUniform(String uniformName, Matrix4f value) {

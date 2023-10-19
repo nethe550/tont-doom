@@ -14,6 +14,8 @@ public class SceneRender {
     private final ShaderProgram shaderProgram;
     private final Uniforms uniforms;
 
+    private float timeElapsed = 0.0f;
+
     public SceneRender() {
         List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<ShaderProgram.ShaderModuleData>();
         shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("shaders/scene.vs", GL_VERTEX_SHADER));
@@ -30,12 +32,18 @@ public class SceneRender {
         Uniforms u = new Uniforms(shaderProgram.getProgramID());
         u.createUniform("projectionMatrix");
         u.createUniform("modelMatrix");
+        u.createUniform("timeElapsed");
         return u;
+    }
+
+    public void update(float diffTimeMillis) {
+        timeElapsed += diffTimeMillis;
     }
 
     public void render(Scene scene) {
         shaderProgram.bind();
 
+        uniforms.setUniform("timeElapsed", timeElapsed);
         uniforms.setUniform("projectionMatrix", scene.getProjection().getMatrix());
 
         Collection<Model> models = scene.getModelMap().values();
