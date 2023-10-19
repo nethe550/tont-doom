@@ -20,9 +20,9 @@ public class SceneRender {
     private float height = 1.0f;
 
     public SceneRender() {
-        List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<ShaderProgram.ShaderModuleData>();
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("shaders/scene.vs", GL_VERTEX_SHADER));
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("shaders/scene.fs", GL_FRAGMENT_SHADER));
+        List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<>();
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene.vs", GL_VERTEX_SHADER));
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene.fs", GL_FRAGMENT_SHADER));
         shaderProgram = new ShaderProgram(shaderModuleDataList);
         uniforms = createUniforms();
     }
@@ -35,11 +35,14 @@ public class SceneRender {
         Uniforms u = new Uniforms(shaderProgram.getProgramID());
         try {
             u.createUniform("projectionMatrix");
+            u.createUniform("viewMatrix");
             u.createUniform("modelMatrix");
-            u.createUniform("timeElapsed");
-            u.createUniform("resolution");
             u.createUniform("texSampler");
-        } catch (Exception e) {}
+            u.createUniform("material.diffuse");
+            u.createUniform("resolution");
+            u.createUniform("timeElapsed");
+        }
+        catch (Exception ignored) {}
         return u;
     }
 
@@ -52,10 +55,11 @@ public class SceneRender {
     public void render(Scene scene) {
         shaderProgram.bind();
 
+        uniforms.setUniform("projectionMatrix", scene.getProjection().getMatrix());
+        uniforms.setUniform("viewMatrix", scene.getCamera().getViewMatrix());
+        uniforms.setUniform("texSampler", 0);
         if (uniforms.hasUniform("timeElapsed")) uniforms.setUniform("timeElapsed", timeElapsed);
-        if (uniforms.hasUniform("projectionMatrix")) uniforms.setUniform("projectionMatrix", scene.getProjection().getMatrix());
         if (uniforms.hasUniform("resolution")) uniforms.setUniform("resolution", new Vector2f(width, height));
-        if (uniforms.hasUniform("texSampler")) uniforms.setUniform("texSampler", 0);
 
         Collection<Model> models = scene.getModelMap().values();
         TextureCache textureCache = scene.getTextureCache();
@@ -63,6 +67,8 @@ public class SceneRender {
             List<Entity> entities = model.getEntities();
 
             for (Material material : model.getMaterials()) {
+                uniforms.setUniform("material.diffuse", material.getDiffuseColor());
+
                 Texture texture = textureCache.getTexture(material.getTexturePath());
                 glActiveTexture(GL_TEXTURE0);
                 texture.bind();

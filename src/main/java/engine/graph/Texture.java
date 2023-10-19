@@ -1,6 +1,5 @@
 package engine.graph;
 
-import engine.util.Util;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.*;
@@ -25,8 +24,7 @@ public class Texture {
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            //ByteBuffer buf = stbi_load(texturePath, w, h, channels, 4);
-            ByteBuffer buf = Util.readImage(Texture.class, texturePath, w, h, channels);
+            ByteBuffer buf = stbi_load(texturePath, w, h, channels, 4);
             if (buf == null) throw new RuntimeException("Texture file \"" + texturePath + "\" failed to load: " + stbi_failure_reason());
 
             int width = w.get();
@@ -57,8 +55,6 @@ public class Texture {
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 
-    public String getTexturePath() {
-        return texturePath;
-    }
+    public String getTexturePath() { return texturePath; }
 
 }

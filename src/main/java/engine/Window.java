@@ -16,6 +16,7 @@ public class Window {
     private int width;
     private int height;
     private Callable<Void> resizeFunc;
+    private MouseInput mouseInput;
 
     public Window(String title, WindowOptions opts, Callable<Void> resizeFunc) {
         this.resizeFunc = resizeFunc;
@@ -71,6 +72,7 @@ public class Window {
         width = awidth[0];
         height = aheight[0];
 
+        mouseInput = new MouseInput(handle);
     }
 
     public void cleanup() {
@@ -83,8 +85,8 @@ public class Window {
 
     public int getWidth() { return width; }
     public int getHeight() { return height; }
-
     public long getHandle() { return handle; }
+    public MouseInput getMouseInput() { return mouseInput; }
 
     public boolean isKeyPressed(int key) { return glfwGetKey(handle, key) == GLFW_PRESS; }
     public void keyCallBack(int key, int action) {

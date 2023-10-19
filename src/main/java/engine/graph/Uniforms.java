@@ -2,6 +2,7 @@ package engine.graph;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.util.*;
@@ -40,6 +41,10 @@ public class Uniforms {
 
     public void setUniform(String uniformName, Vector2f value) {
         glUniform2fv(getUniformLocation(uniformName), new float[] { value.x, value.y });
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        glUniform4fv(getUniformLocation(uniformName), new float[] { value.x, value.y, value.z, value.w });
     }
 
     public void setUniform(String uniformName, Matrix4f value) {
