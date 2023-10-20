@@ -1,5 +1,6 @@
 package engine;
 
+import engine.input.MouseInput;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -104,7 +105,9 @@ public class Window {
         catch (Exception e) { e.printStackTrace(); }
     }
 
-    public void update() { glfwSwapBuffers(handle); }
+    public void update() {
+        glfwSwapBuffers(handle);
+    }
 
     public boolean windowShouldClose() { return glfwWindowShouldClose(handle); }
 

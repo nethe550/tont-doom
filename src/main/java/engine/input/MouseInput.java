@@ -1,4 +1,4 @@
-package engine;
+package engine.input;
 
 import org.joml.Vector2f;
 

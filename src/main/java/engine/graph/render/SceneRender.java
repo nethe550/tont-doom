@@ -1,6 +1,9 @@
-package engine.graph;
+package engine.graph.render;
 
-import engine.scene.Entity;
+import engine.graph.model.Material;
+import engine.graph.model.Mesh;
+import engine.graph.model.Model;
+import engine.scene.model.Entity;
 import engine.scene.Scene;
 import org.joml.Vector2f;
 

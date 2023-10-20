@@ -1,6 +1,6 @@
-package engine.graph;
+package engine.graph.model;
 
-import engine.scene.Entity;
+import engine.scene.model.Entity;
 
 import java.util.*;
 

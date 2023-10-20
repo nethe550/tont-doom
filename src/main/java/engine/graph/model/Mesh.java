@@ -1,4 +1,4 @@
-package engine.graph;
+package engine.graph.model;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;

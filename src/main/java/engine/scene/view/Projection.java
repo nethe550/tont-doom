@@ -1,4 +1,4 @@
-package engine.scene;
+package engine.scene.view;
 
 import org.joml.Matrix4f;
 

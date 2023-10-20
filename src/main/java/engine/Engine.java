@@ -1,7 +1,8 @@
 package engine;
 
-import engine.graph.Render;
+import engine.graph.render.Render;
 import engine.scene.Scene;
+import engine.ui.IGUIInstance;
 
 public class Engine {
 
@@ -24,7 +25,7 @@ public class Engine {
         targetFPS = opts.fps;
         targetUPS = opts.ups;
         this.appLogic = appLogic;
-        render = new Render();
+        render = new Render(window);
         scene = new Scene(window.getWidth(), window.getHeight());
         appLogic.init(window, scene, render);
         running = true;
@@ -38,7 +39,9 @@ public class Engine {
     }
 
     private void resize() {
-        scene.resize(window.getWidth(), window.getHeight());
+        int width = window.getWidth(), height = window.getHeight();
+        scene.resize(width, height);
+        render.resize(width, height);
     }
 
     private void run() {
@@ -49,6 +52,7 @@ public class Engine {
         float deltaUpdate = 0;
         float deltaFPS = 0;
 
+        IGUIInstance iGuiInstance = scene.getGUIInstance();
         long updateTime = time;
         while (running && !window.windowShouldClose()) {
             window.pollEvents();
@@ -59,7 +63,8 @@ public class Engine {
 
             if (targetFPS <= 0 || deltaFPS >= 1) {
                 window.getMouseInput().input();
-                appLogic.input(window, scene, now - time);
+                boolean inputConsumed = iGuiInstance != null && iGuiInstance.handleGUIInput(scene, window);
+                appLogic.input(window, scene, now - time, inputConsumed);
             }
 
             if (deltaUpdate >= 1) {
@@ -75,6 +80,7 @@ public class Engine {
                 deltaFPS--;
                 window.update();
             }
+
             time = now;
         }
 

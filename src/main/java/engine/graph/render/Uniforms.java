@@ -1,4 +1,4 @@
-package engine.graph;
+package engine.graph.render;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

@@ -1,7 +1,11 @@
 package engine.scene;
 
-import engine.graph.Model;
-import engine.graph.TextureCache;
+import engine.graph.model.Model;
+import engine.graph.render.TextureCache;
+import engine.scene.model.Entity;
+import engine.scene.view.Camera;
+import engine.scene.view.Projection;
+import engine.ui.IGUIInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,17 +13,17 @@ import java.util.Map;
 public class Scene {
 
     private final Map<String, Model> modelMap;
-
-    private final Projection projection;
-
     private final TextureCache textureCache;
 
+    private final Projection projection;
     private final Camera camera;
 
+    private IGUIInstance guiInstance;
+
     public Scene(int width, int height) {
-        modelMap = new HashMap<String, Model>();
-        projection = new Projection(width, height);
+        modelMap = new HashMap<>();
         textureCache = new TextureCache();
+        projection = new Projection(width, height);
         camera = new Camera();
     }
 
@@ -34,9 +38,12 @@ public class Scene {
         modelMap.put(model.getID(), model);
     }
 
-    public Projection getProjection() { return projection; }
     public TextureCache getTextureCache() { return textureCache; }
+    public Projection getProjection() { return projection; }
     public Camera getCamera() { return camera; }
+    public IGUIInstance getGUIInstance() { return guiInstance; }
+
+    public void setGUIInstance(IGUIInstance guiInstance) { this.guiInstance = guiInstance; }
 
     public void resize(int width, int height) {
         projection.updateProjection(width, height);

@@ -1,9 +1,9 @@
-package engine.scene;
+package engine.scene.model;
 
-import engine.graph.Material;
-import engine.graph.Mesh;
-import engine.graph.Model;
-import engine.graph.TextureCache;
+import engine.graph.model.Material;
+import engine.graph.model.Mesh;
+import engine.graph.model.Model;
+import engine.graph.render.TextureCache;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;

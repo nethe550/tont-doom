@@ -1,4 +1,4 @@
-package engine.scene;
+package engine.scene.model;
 
 import org.joml.*;
 
