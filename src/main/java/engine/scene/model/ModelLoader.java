@@ -63,6 +63,34 @@ public class ModelLoader {
         return new Model(modelID, materials);
     }
 
+    private static Mesh processMesh(AIMesh aiMesh) {
+        float[] vertices = processVertices(aiMesh);
+        float[] texCoords = processTexCoords(aiMesh);
+        int[] indices = processIndices(aiMesh);
+        float[] normals = processNormals(aiMesh);
+
+        // texture coordinates may not be populated
+        if (texCoords.length == 0) {
+            int numElements = (vertices.length / 3) * 2;
+            texCoords = new float[numElements];
+        }
+
+        return new Mesh(vertices, texCoords, indices, normals);
+    }
+
+    private static float[] processVertices(AIMesh aiMesh) {
+        AIVector3D.Buffer buffer = aiMesh.mVertices();
+        float[] data = new float[buffer.remaining() * 3];
+        int pos = 0;
+        while (buffer.remaining() > 0) {
+            AIVector3D textCoord = buffer.get();
+            data[pos++] = textCoord.x();
+            data[pos++] = textCoord.y();
+            data[pos++] = textCoord.z();
+        }
+        return data;
+    }
+
     private static int[] processIndices(AIMesh aiMesh) {
         List<Integer> indices = new ArrayList<>();
         int numFaces = aiMesh.mNumFaces();
@@ -77,18 +105,17 @@ public class ModelLoader {
         return indices.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    private static Mesh processMesh(AIMesh aiMesh) {
-        float[] vertices = processVertices(aiMesh);
-        float[] texCoords = processTexCoords(aiMesh);
-        int[] indices = processIndices(aiMesh);
-
-        // texture coordinates may not be populated
-        if (texCoords.length == 0) {
-            int numElements = (vertices.length / 3) * 2;
-            texCoords = new float[numElements];
+    private static float[] processNormals(AIMesh aiMesh) {
+        AIVector3D.Buffer buf = aiMesh.mNormals();
+        float[] data = new float[buf.remaining() * 3];
+        int pos = 0;
+        while (buf.remaining() > 0) {
+            AIVector3D normal = buf.get();
+            data[pos++] = normal.x();
+            data[pos++] = normal.y();
+            data[pos++] = normal.z();
         }
-
-        return new Mesh(vertices, texCoords, indices);
+        return data;
     }
 
     private static float[] processTexCoords(AIMesh aiMesh) {
@@ -105,27 +132,32 @@ public class ModelLoader {
         return data;
     }
 
-    private static float[] processVertices(AIMesh aiMesh) {
-        AIVector3D.Buffer buffer = aiMesh.mVertices();
-        float[] data = new float[buffer.remaining() * 3];
-        int pos = 0;
-        while (buffer.remaining() > 0) {
-            AIVector3D textCoord = buffer.get();
-            data[pos++] = textCoord.x();
-            data[pos++] = textCoord.y();
-            data[pos++] = textCoord.z();
-        }
-        return data;
-    }
-
     private static Material processMaterial(AIMaterial aiMaterial, TextureCache textureCache, String modelDir) {
         Material material = new Material();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             AIColor4D color = AIColor4D.create();
 
-            int result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
+            // ambient color
+            int result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
+            if (result == aiReturn_SUCCESS) material.setAmbientColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
+
+            // diffuse color
+            result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
             if (result == aiReturn_SUCCESS) material.setDiffuseColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
 
+            // specular color
+            result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
+            if (result == aiReturn_SUCCESS) material.setSpecularColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
+
+            // specular
+            float reflectance = 0.0f;
+            float[] glossinessFactor = new float[] { 0.0f };
+            int[] pMax = new int[] { 1 };
+            result = aiGetMaterialFloatArray(aiMaterial, AI_MATKEY_SHININESS_STRENGTH, aiTextureType_NONE, 0, glossinessFactor, pMax);
+            if (result != aiReturn_SUCCESS) reflectance = glossinessFactor[0];
+            material.setSpecular(reflectance);
+
+            // texture
             AIString aiTexturePath = AIString.calloc(stack);
             aiGetMaterialTexture(aiMaterial, aiTextureType_DIFFUSE, 0, aiTexturePath, (IntBuffer) null, null, null, null, null, null);
 

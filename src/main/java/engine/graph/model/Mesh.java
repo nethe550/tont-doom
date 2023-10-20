@@ -11,30 +11,21 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
-    public static class MeshData {
-        public float[] positions;
-        public float[] texcoords;
-        public int[] indices;
-        public MeshData(float[] positions, float[] texcoords, int[] indices) {
-            this.positions = positions;
-            this.texcoords = texcoords;
-            this.indices = indices;
-        }
-    }
+    public record MeshData(float[] positions, float[] texcoords, int[] indices, float[] normals) {}
 
     private int numVertices;
     private int vaoID;
     private List<Integer> vboIDList;
 
     public Mesh(MeshData data) {
-        initGL(data.positions, data.texcoords, data.indices);
+        initGL(data.positions, data.texcoords, data.indices, data.normals);
     }
 
-    public Mesh(float[] positions, float[] texcoords, int[] indices) {
-        initGL(positions, texcoords, indices);
+    public Mesh(float[] positions, float[] texcoords, int[] indices, float[] normals) {
+        initGL(positions, texcoords, indices, normals);
     }
 
-    private void initGL(float[] positions, float[] texcoords, int[] indices) {
+    private void initGL(float[] positions, float[] texcoords, int[] indices, float[] normals) {
         this.numVertices = indices.length;
         vboIDList = new ArrayList<>();
 
@@ -52,6 +43,16 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
+        // normals
+        vboID = glGenBuffers();
+        vboIDList.add(vboID);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(normals.length);
+        normalsBuffer.put(0, normals);
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, normalsBuffer, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+
         // texcoords
         vboID = glGenBuffers();
         vboIDList.add(vboID);
@@ -60,13 +61,13 @@ public class Mesh {
         texCoordsBuffer.put(0, texcoords);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
 
+        // indices
         vboID = glGenBuffers();
         vboIDList.add(vboID);
 
-        // indices
         IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indices.length);
         indicesBuffer.put(indices).flip();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID);
@@ -74,6 +75,8 @@ public class Mesh {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+
     }
 
     public void cleanup() {

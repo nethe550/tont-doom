@@ -2,6 +2,7 @@ package engine.scene;
 
 import engine.graph.model.Model;
 import engine.graph.render.TextureCache;
+import engine.scene.light.SceneLights;
 import engine.scene.model.Entity;
 import engine.scene.view.Camera;
 import engine.scene.view.Projection;
@@ -19,6 +20,8 @@ public class Scene {
     private final Camera camera;
 
     private IGUIInstance guiInstance;
+
+    private SceneLights sceneLights;
 
     public Scene(int width, int height) {
         modelMap = new HashMap<>();
@@ -42,8 +45,10 @@ public class Scene {
     public Projection getProjection() { return projection; }
     public Camera getCamera() { return camera; }
     public IGUIInstance getGUIInstance() { return guiInstance; }
+    public SceneLights getSceneLights() { return sceneLights; }
 
     public void setGUIInstance(IGUIInstance guiInstance) { this.guiInstance = guiInstance; }
+    public void setSceneLights(SceneLights sceneLights) { this.sceneLights = sceneLights; }
 
     public void resize(int width, int height) {
         projection.updateProjection(width, height);
