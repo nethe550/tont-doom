@@ -13,16 +13,29 @@ public class LightControls implements IGUIInstance {
 
     private final float[] ambientColor;
     private final float[] ambientFactor;
+
     private final float[] dirLightColor;
     private final float[] dirLightIntensity;
     private final float[] dirLightX;
     private final float[] dirLightY;
     private final float[] dirLightZ;
+
     private final float[] pointLightColor;
     private final float[] pointLightIntensity;
     private final float[] pointLightX;
     private final float[] pointLightY;
     private final float[] pointLightZ;
+
+    private final float[] spotLightColor;
+    private final float[] spotLightIntensity;
+    private final float[] spotLightX;
+    private final float[] spotLightY;
+    private final float[] spotLightZ;
+    private final float[] spotLightDirX;
+    private final float[] spotLightDirY;
+    private final float[] spotLightDirZ;
+    private final float[] spotLightInnerCutoff;
+    private final float[] spotLightOuterCutoff;
 
     public LightControls(Scene scene) {
         SceneLights sceneLights = scene.getSceneLights();
@@ -39,7 +52,22 @@ public class LightControls implements IGUIInstance {
         pointLightX = new float[] { pos.x };
         pointLightY = new float[] { pos.y };
         pointLightZ = new float[] { pos.z };
-        pointLightIntensity = new float[]{pointLight.getIntensity()};
+        pointLightIntensity = new float[] { pointLight.getIntensity() };
+
+        SpotLight spotLight = sceneLights.getSpots().get(0);
+        color = spotLight.getColor();
+        pos = spotLight.getPosition();
+        spotLightColor = new float[] { color.x, color.y, color.z };
+        spotLightX = new float[] { pos.x };
+        spotLightY = new float[] { pos.y };
+        spotLightZ = new float[] { pos.z };
+        spotLightIntensity = new float[] { spotLight.getIntensity() };
+        pos = spotLight.getDirection();
+        spotLightDirX = new float[] { pos.x };
+        spotLightDirY = new float[] { pos.y };
+        spotLightDirZ = new float[] { pos.z };
+        spotLightInnerCutoff = new float[] { 20.0f };
+        spotLightOuterCutoff = new float[] { 40.0f };
 
         DirectionalLight directionalLight = sceneLights.getDirectional();
         color = directionalLight.getColor();
@@ -68,7 +96,20 @@ public class LightControls implements IGUIInstance {
             ImGui.sliderFloat("Point Light - y", pointLightY, -10.0f, 10.0f, "%.2f");
             ImGui.sliderFloat("Point Light - z", pointLightZ, -10.0f, 10.0f, "%.2f");
             ImGui.colorEdit3("Point Light color", pointLightColor);
-            ImGui.sliderFloat("Point Light Intensity", pointLightIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui.sliderFloat("Point Light Intensity", pointLightIntensity, 0.0f, 10.0f, "%.2f");
+        }
+
+        if (ImGui.collapsingHeader("Spot Light")) {
+            ImGui.sliderFloat("Spot Light - x", spotLightX, -10.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light - y", spotLightY, -10.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light - z", spotLightZ, -10.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light Dir - x", spotLightDirX, -1.0f, 1.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light Dir - y", spotLightDirY, -1.0f, 1.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light Dir - z", spotLightDirZ, -1.0f, 1.0f, "%.2f");
+            ImGui.colorEdit3("Spot Light color", spotLightColor);
+            ImGui.sliderFloat("Spot Light Intensity", spotLightIntensity, 0.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light Inner Cutoff", spotLightInnerCutoff, 0.0f, 89.99f, "%.2f");
+            ImGui.sliderFloat("Spot light Outer Cutoff", spotLightOuterCutoff, 0.01f, 90.0f, "%.2f");
         }
 
         if (ImGui.collapsingHeader("Dir Light")) {
@@ -76,7 +117,7 @@ public class LightControls implements IGUIInstance {
             ImGui.sliderFloat("Dir Light - y", dirLightY, -1.0f, 1.0f, "%.2f");
             ImGui.sliderFloat("Dir Light - z", dirLightZ, -1.0f, 1.0f, "%.2f");
             ImGui.colorEdit3("Dir Light color", dirLightColor);
-            ImGui.sliderFloat("Dir Light Intensity", dirLightIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui.sliderFloat("Dir Light Intensity", dirLightIntensity, 0.0f, 10.0f, "%.2f");
         }
 
         ImGui.end();
@@ -104,6 +145,14 @@ public class LightControls implements IGUIInstance {
             pointLight.setPosition(pointLightX[0], pointLightY[0], pointLightZ[0]);
             pointLight.setColor(pointLightColor[0], pointLightColor[1], pointLightColor[2]);
             pointLight.setIntensity(pointLightIntensity[0]);
+
+            SpotLight spotLight = sceneLights.getSpots().get(0);
+            spotLight.setPosition(spotLightX[0], spotLightY[0], spotLightZ[0]);
+            spotLight.setColor(spotLightColor[0], spotLightColor[1], spotLightColor[2]);
+            spotLight.setDirection(spotLightDirX[0], spotLightDirY[0], spotLightDirZ[0]);
+            spotLight.setIntensity(spotLightIntensity[0]);
+            spotLight.setInnerCutoff(spotLightInnerCutoff[0]);
+            spotLight.setOuterCutoff(spotLightOuterCutoff[0]);
 
             DirectionalLight directionalLight = sceneLights.getDirectional();
             directionalLight.setDirection(dirLightX[0], dirLightY[0], dirLightZ[0]);

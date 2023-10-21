@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class SceneRender {
 
     private static final int MAX_POINT_LIGHTS = 16;
+    private static final int MAX_SPOT_LIGHTS = 16;
 
     private final ShaderProgram shaderProgram;
     private final Uniforms uniforms;
@@ -69,6 +70,19 @@ public class SceneRender {
             u.createUniform(name + ".attenuation.constant");
             u.createUniform(name + ".attenuation.linear");
             u.createUniform(name + ".attenuation.exponent");
+        }
+
+        for (int i = 0; i < MAX_SPOT_LIGHTS; i++) {
+            String name = "spotLights[" + i + "]";
+            u.createUniform(name + ".position");
+            u.createUniform(name + ".direction");
+            u.createUniform(name + ".color");
+            u.createUniform(name + ".intensity");
+            u.createUniform(name + ".attenuation.constant");
+            u.createUniform(name + ".attenuation.linear");
+            u.createUniform(name + ".attenuation.exponent");
+            u.createUniform(name + ".innerCutoff");
+            u.createUniform(name + ".outerCutoff");
         }
 
         u.createUniform("directionalLight.color");
@@ -149,6 +163,16 @@ public class SceneRender {
             String name = "pointLights[" + i + "]";
             updatePointLight(pointLight, name, viewMatrix);
         }
+
+        List<SpotLight> spotLights = sceneLights.getSpots();
+        int numSpotLights = spotLights.size();
+        SpotLight spotLight;
+        for (int i = 0; i < MAX_SPOT_LIGHTS; i++) {
+            if ( i < numSpotLights) spotLight = spotLights.get(i);
+            else spotLight = null;
+            String name = "spotLights[" + i + "]";
+            updateSpotLight(spotLight, name, viewMatrix);
+        }
     }
 
     private void updatePointLight(PointLight pointLight, String prefix, Matrix4f viewMatrix) {
@@ -161,7 +185,7 @@ public class SceneRender {
         float exponent = 0.0f;
 
         if (pointLight != null) {
-            aux.set(pointLight.getPosition(), 1);
+            aux.set(pointLight.getPosition(), 1); // w=1; treat like position
             aux.mul(viewMatrix);
             lightPosition.set(aux.x, aux.y, aux.z);
             color.set(pointLight.getColor());
@@ -178,6 +202,45 @@ public class SceneRender {
         uniforms.setUniform(prefix + ".attenuation.constant", constant);
         uniforms.setUniform(prefix + ".attenuation.linear", linear);
         uniforms.setUniform(prefix + ".attenuation.exponent", exponent);
+    }
+
+    private void updateSpotLight(SpotLight spotLight, String prefix, Matrix4f viewMatrix) {
+        Vector4f aux = new Vector4f();
+        Vector3f position = new Vector3f();
+        Vector3f direction = new Vector3f();
+        Vector3f color = new Vector3f();
+        float intensity = 0.0f;
+        float constant = 0.0f;
+        float linear = 0.0f;
+        float exponent = 0.0f;
+        float innerCutoff = 0.0f;
+        float outerCutoff = 0.0f;
+        if (spotLight != null) {
+            aux.set(spotLight.getPosition(), 1); // w=1; treat like position
+            aux.mul(viewMatrix);
+            position.set(aux.x, aux.y, aux.z);
+            aux.set(spotLight.getDirection(), 0); // w=0; treat like direction
+            aux.mul(viewMatrix);
+            direction.set(aux.x, aux.y, aux.z);
+            color.set(spotLight.getColor());
+            intensity = spotLight.getIntensity();
+            PointLight.Attenuation attenuation = spotLight.getAttenuation();
+            constant = attenuation.getConstant();
+            linear = attenuation.getLinear();
+            exponent = attenuation.getExponent();
+            innerCutoff = spotLight.getInnerCutoff();
+            outerCutoff = spotLight.getOuterCutoff();
+        }
+
+        uniforms.setUniform(prefix + ".position", position);
+        uniforms.setUniform(prefix + ".direction", direction);
+        uniforms.setUniform(prefix + ".color", color);
+        uniforms.setUniform(prefix + ".intensity", intensity);
+        uniforms.setUniform(prefix + ".attenuation.constant", constant);
+        uniforms.setUniform(prefix + ".attenuation.linear", linear);
+        uniforms.setUniform(prefix + ".attenuation.exponent", exponent);
+        uniforms.setUniform(prefix + ".innerCutoff", innerCutoff);
+        uniforms.setUniform(prefix + ".outerCutoff", outerCutoff);
     }
 
 }

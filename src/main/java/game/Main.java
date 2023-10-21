@@ -6,6 +6,7 @@ import engine.graph.render.Render;
 import engine.input.MouseInput;
 import engine.scene.light.PointLight;
 import engine.scene.light.SceneLights;
+import engine.scene.light.SpotLight;
 import engine.scene.view.Camera;
 import engine.scene.model.Entity;
 import engine.scene.model.ModelLoader;
@@ -101,8 +102,30 @@ public class Main implements IAppLogic, IGUIInstance {
         sceneLights.getDirectional().setColor(1.0f, 0.99f, 0.93f);
         scene.setSceneLights(sceneLights);
 
-        sceneLights.getPoints().add(new PointLight(new Vector3f(1.0f, 0.0f, 0.0f), new Vector3f(-9.14f, 1.15f, -1.65f), 1.0f));
-        sceneLights.getPoints().add(new PointLight(new Vector3f(0.5f, 0.0f, 1.0f), new Vector3f(-11.0f, 1.15f, -3.0f), 1.0f));
+        sceneLights.getPoints().add(
+            new PointLight(
+                new Vector3f(1.0f, 0.0f, 0.0f),
+                new Vector3f(-9.14f, 1.15f, -1.65f),
+                1.0f
+            )
+        );
+        sceneLights.getPoints().add(
+            new PointLight(
+                new Vector3f(0.5f, 0.0f, 1.0f),
+                new Vector3f(-11.0f, 1.15f, -3.0f),
+                1.0f
+            )
+        );
+        sceneLights.getSpots().add(
+            new SpotLight(
+                new Vector3f(0.35f, 0.48f, 1.0f),
+                new Vector3f(-9.8f, 1.5f, 1.25f),
+                new Vector3f(0.0f, (float) -Math.sqrt(2) * 0.5f, (float) -Math.sqrt(2) * 0.5f),
+                6.0f,
+                20f,
+                40f
+            )
+        );
 
         lightControls = new LightControls(scene);
         scene.setGUIInstance(lightControls);
