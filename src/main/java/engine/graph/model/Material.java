@@ -15,6 +15,7 @@ public class Material {
     private float specular;
     private List<Mesh> meshes;
     private String texturePath;
+    private String normalMapPath;
 
     public Material() {
         ambientColor = DEFAULT_COLOR;
@@ -33,11 +34,13 @@ public class Material {
     public float getSpecular() { return specular; }
     public List<Mesh> getMeshes() { return meshes; }
     public String getTexturePath() { return texturePath; }
+    public String getNormalMapPath() { return normalMapPath; }
 
     public void setAmbientColor(Vector4f color) { this.ambientColor = color; }
     public void setDiffuseColor(Vector4f color) { this.diffuseColor = color; }
     public void setSpecularColor(Vector4f color) { this.specularColor = color; }
     public void setSpecular(float reflectance) { this.specular = reflectance; }
     public void setTexturePath(String texturePath) { this.texturePath = texturePath; }
+    public void setNormalMapPath(String normalMapPath) { this.normalMapPath = normalMapPath; }
 
 }

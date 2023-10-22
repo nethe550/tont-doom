@@ -1,4 +1,4 @@
-newmtl mapwall
+newmtl monkey
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
@@ -8,6 +8,6 @@ Ni 1.450000
 d 1.000000
 illum 2
 
-map_Ka map-wall.png
-map_Kd map-wall.png
-map_Kn map-wall_normal.png
+map_Ka monkey.png
+map_Kd monkey.png
+map_Kn monkey_normal.png

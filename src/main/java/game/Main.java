@@ -4,6 +4,8 @@ import engine.*;
 import engine.graph.model.Model;
 import engine.graph.render.Render;
 import engine.input.MouseInput;
+import engine.scene.Fog;
+import engine.scene.SkyBox;
 import engine.scene.light.PointLight;
 import engine.scene.light.SceneLights;
 import engine.scene.light.SpotLight;
@@ -11,6 +13,7 @@ import engine.scene.view.Camera;
 import engine.scene.model.Entity;
 import engine.scene.model.ModelLoader;
 import engine.scene.Scene;
+import engine.scene.view.Projection;
 import engine.ui.IGUIInstance;
 import game.ui.LightControls;
 import imgui.ImGui;
@@ -30,6 +33,7 @@ public class Main implements IAppLogic, IGUIInstance {
 
     private Entity turretEntity;
     private Entity testMapEntity;
+    private Entity monkeyEntity;
 
     private LightControls lightControls;
 
@@ -70,6 +74,9 @@ public class Main implements IAppLogic, IGUIInstance {
         final String turretModelPath = "resources/models/turret/turret.obj";
         final String turretModelID = "turret-model";
         final String turretEntityID = "turret-entity";
+        final String monkeyModelPath = "resources/models/monkey/monkey.obj";
+        final String monkeyModelID = "monkey-model";
+        final String monkeyEntityID = "monkey-entity";
         final String testMapModelPath = "resources/models/testmap/testmap.obj";
         final String testMapModelID = "testmap-model";
         final String testMapEntityID = "testmap-entity";
@@ -84,6 +91,17 @@ public class Main implements IAppLogic, IGUIInstance {
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to create turret entity from path \"" + turretModelPath + "\"", e);
+        }
+
+        try {
+            Model monkeyModel = ModelLoader.loadModel(monkeyModelID, monkeyModelPath, scene.getTextureCache());
+            scene.addModel(monkeyModel);
+            monkeyEntity = new Entity(monkeyEntityID, monkeyModel.getID());
+            monkeyEntity.setPosition(-1f, 1f, -1f);
+            scene.addEntity(monkeyEntity);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to create monkey entity from path \"" + monkeyModelPath + "\"", e);
         }
 
         try {
@@ -129,6 +147,20 @@ public class Main implements IAppLogic, IGUIInstance {
 
         lightControls = new LightControls(scene);
         scene.setGUIInstance(lightControls);
+
+        try {
+            SkyBox skyBox = new SkyBox("resources/models/skybox/skybox.obj", scene.getTextureCache());
+            skyBox.getEntity().setScale(Projection.Z_FAR);
+            scene.setSkyBox(skyBox);
+            updateSkyBox(scene);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to create skybox.");
+        }
+
+        scene.setFog(new Fog(true, new Vector3f(0.1f, 0.1f, 0.2f), 0.05f));
+
+        scene.getCamera().moveUp(1.0f);
     }
 
     @Override
@@ -141,8 +173,8 @@ public class Main implements IAppLogic, IGUIInstance {
         else if (window.isKeyPressed(GLFW_KEY_S)) camera.moveBack(speed);
         if (window.isKeyPressed(GLFW_KEY_A)) camera.moveLeft(speed);
         else if (window.isKeyPressed(GLFW_KEY_D)) camera.moveRight(speed);
-        if (window.isKeyPressed(GLFW_KEY_Q)) camera.moveUp(speed);
-        else if (window.isKeyPressed(GLFW_KEY_E)) camera.moveDown(speed);
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) camera.moveUp(speed);
+        else if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) camera.moveDown(speed);
 
         MouseInput mouseInput = window.getMouseInput();
         if (mouseInput.isRightButtonPressed()) {
@@ -153,7 +185,14 @@ public class Main implements IAppLogic, IGUIInstance {
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
+        updateSkyBox(scene);
+    }
 
+    public void updateSkyBox(Scene scene) {
+        Camera camera = scene.getCamera();
+        Vector3f cameraPos = camera.getPosition();
+        Entity skyBoxEntity = scene.getSkyBox().getEntity();
+        skyBoxEntity.setPosition(cameraPos);
     }
 
 }

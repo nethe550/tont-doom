@@ -22,12 +22,16 @@ public class Scene {
     private IGUIInstance guiInstance;
 
     private SceneLights sceneLights;
+    private Fog fog;
+
+    private SkyBox skyBox;
 
     public Scene(int width, int height) {
         modelMap = new HashMap<>();
         textureCache = new TextureCache();
         projection = new Projection(width, height);
         camera = new Camera();
+        fog = new Fog();
     }
 
     public void addEntity(Entity entity) {
@@ -46,9 +50,13 @@ public class Scene {
     public Camera getCamera() { return camera; }
     public IGUIInstance getGUIInstance() { return guiInstance; }
     public SceneLights getSceneLights() { return sceneLights; }
+    public Fog getFog() { return fog; }
+    public SkyBox getSkyBox() { return skyBox; }
 
     public void setGUIInstance(IGUIInstance guiInstance) { this.guiInstance = guiInstance; }
     public void setSceneLights(SceneLights sceneLights) { this.sceneLights = sceneLights; }
+    public void setFog(Fog fog) { this.fog = fog; }
+    public void setSkyBox(SkyBox skyBox) { this.skyBox = skyBox; }
 
     public void resize(int width, int height) {
         projection.updateProjection(width, height);

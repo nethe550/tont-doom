@@ -68,6 +68,8 @@ public class ModelLoader {
         float[] texCoords = processTexCoords(aiMesh);
         int[] indices = processIndices(aiMesh);
         float[] normals = processNormals(aiMesh);
+        float[] tangents = processTangents(aiMesh, normals);
+        float[] bitangents = processBitangents(aiMesh, normals);
 
         // texture coordinates may not be populated
         if (texCoords.length == 0) {
@@ -75,7 +77,7 @@ public class ModelLoader {
             texCoords = new float[numElements];
         }
 
-        return new Mesh(vertices, texCoords, indices, normals);
+        return new Mesh(vertices, texCoords, indices, normals, tangents, bitangents);
     }
 
     private static float[] processVertices(AIMesh aiMesh) {
@@ -118,6 +120,36 @@ public class ModelLoader {
         return data;
     }
 
+    private static float[] processTangents(AIMesh aiMesh, float[] normals) {
+        AIVector3D.Buffer buf = aiMesh.mTangents();
+        float[] data = new float[buf.remaining() * 3];
+        int pos = 0;
+        while(buf.remaining() > 0) {
+            AIVector3D aiTangent = buf.get();
+            data[pos++] = aiTangent.x();
+            data[pos++] = aiTangent.y();
+            data[pos++] = aiTangent.z();
+        }
+
+        if (data.length == 0) data = new float[normals.length];
+        return data;
+    }
+
+    private static float[] processBitangents(AIMesh aiMesh, float[] normals) {
+        AIVector3D.Buffer buf = aiMesh.mBitangents();
+        float[] data = new float[buf.remaining() * 3];
+        int pos = 0;
+        while (buf.remaining() > 0) {
+            AIVector3D aiBitangent = buf.get();
+            data[pos++] = aiBitangent.x();
+            data[pos++] = aiBitangent.y();
+            data[pos++] = aiBitangent.z();
+        }
+
+        if (data.length == 0) data = new float[normals.length];
+        return data;
+    }
+
     private static float[] processTexCoords(AIMesh aiMesh) {
         AIVector3D.Buffer buffer = aiMesh.mTextureCoords(0);
         if (buffer == null) return new float[] {};
@@ -149,13 +181,23 @@ public class ModelLoader {
             result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
             if (result == aiReturn_SUCCESS) material.setSpecularColor(new Vector4f(color.r(), color.g(), color.b(), color.a()));
 
-            // specular
+            // specular exponent
             float reflectance = 0.0f;
             float[] glossinessFactor = new float[] { 0.0f };
             int[] pMax = new int[] { 1 };
             result = aiGetMaterialFloatArray(aiMaterial, AI_MATKEY_SHININESS_STRENGTH, aiTextureType_NONE, 0, glossinessFactor, pMax);
             if (result != aiReturn_SUCCESS) reflectance = glossinessFactor[0];
             material.setSpecular(reflectance);
+
+            // normal map
+            AIString aiNormalMapPath = AIString.calloc(stack);
+            aiGetMaterialTexture(aiMaterial, aiTextureType_NORMALS, 0, aiNormalMapPath, (IntBuffer) null, null, null, null, null, null);
+            String normalMapPath = aiNormalMapPath.dataString();
+            if (normalMapPath.length() > 0) {
+                material.setNormalMapPath(modelDir + File.separator + new File(normalMapPath).getName());
+                textureCache.createTexture(material.getNormalMapPath());
+                material.setDiffuseColor(Material.DEFAULT_COLOR);
+            }
 
             // texture
             AIString aiTexturePath = AIString.calloc(stack);

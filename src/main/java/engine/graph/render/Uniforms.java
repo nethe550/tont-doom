@@ -36,6 +36,10 @@ public class Uniforms {
         return location.intValue();
     }
 
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(getUniformLocation(uniformName), value);
+    }
+
     public void setUniform(String uniformName, float value) {
         glUniform1f(getUniformLocation(uniformName), value);
     }

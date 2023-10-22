@@ -1,13 +1,12 @@
-newmtl mapwall
-Ns 250.000000
+newmtl skybox
+Ns 359.999993
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
-Ni 1.450000
+Ni 1.000000
 d 1.000000
 illum 2
 
-map_Ka map-wall.png
-map_Kd map-wall.png
-map_Kn map-wall_normal.png
+map_Ka skybox.png
+map_Kd skybox.png

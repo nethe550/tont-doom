@@ -3,6 +3,7 @@ package engine.graph.render;
 import engine.graph.model.Material;
 import engine.graph.model.Mesh;
 import engine.graph.model.Model;
+import engine.scene.Fog;
 import engine.scene.light.*;
 import engine.scene.model.Entity;
 import engine.scene.Scene;
@@ -48,6 +49,7 @@ public class SceneRender {
         u.createUniform("modelMatrix");
 
         u.createUniform("texSampler");
+        u.createUniform("normalTexSampler");
         try {
             u.createUniform("timeElapsed");
             u.createUniform("resolution");
@@ -58,6 +60,7 @@ public class SceneRender {
         u.createUniform("material.diffuse");
         u.createUniform("material.specular");
         u.createUniform("material.glossiness");
+        u.createUniform("material.hasNormalMap");
 
         u.createUniform("ambientLight.factor");
         u.createUniform("ambientLight.color");
@@ -88,6 +91,10 @@ public class SceneRender {
         u.createUniform("directionalLight.color");
         u.createUniform("directionalLight.direction");
         u.createUniform("directionalLight.intensity");
+
+        u.createUniform("fog.fogActive");
+        u.createUniform("fog.color");
+        u.createUniform("fog.density");
         return u;
     }
 
@@ -98,15 +105,25 @@ public class SceneRender {
     }
 
     public void render(Scene scene) {
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         shaderProgram.bind();
 
         uniforms.setUniform("projectionMatrix", scene.getProjection().getMatrix());
         uniforms.setUniform("viewMatrix", scene.getCamera().getViewMatrix());
         uniforms.setUniform("texSampler", 0);
-        if (uniforms.hasUniform("timeElapsed")) uniforms.setUniform("timeElapsed", timeElapsed);
-        if (uniforms.hasUniform("resolution")) uniforms.setUniform("resolution", new Vector2f(width, height));
+        uniforms.setUniform("normalTexSampler", 1);
 
         updateLights(scene);
+
+        Fog fog = scene.getFog();
+        uniforms.setUniform("fog.fogActive", fog.getActive() ? 1 : 0);
+        uniforms.setUniform("fog.color", fog.getColor());
+        uniforms.setUniform("fog.density", fog.getDensity());
+
+        if (uniforms.hasUniform("timeElapsed")) uniforms.setUniform("timeElapsed", timeElapsed);
+        if (uniforms.hasUniform("resolution")) uniforms.setUniform("resolution", new Vector2f(width, height));
 
         Collection<Model> models = scene.getModelMap().values();
         TextureCache textureCache = scene.getTextureCache();
@@ -119,9 +136,19 @@ public class SceneRender {
                 uniforms.setUniform("material.specular", material.getSpecularColor());
                 uniforms.setUniform("material.glossiness", material.getSpecular());
 
+                String normalMapPath = material.getNormalMapPath();
+                boolean hasNormalMapPath = normalMapPath != null;
+                uniforms.setUniform("material.hasNormalMap", hasNormalMapPath ? 1 : 0);
+
                 Texture texture = textureCache.getTexture(material.getTexturePath());
                 glActiveTexture(GL_TEXTURE0);
                 texture.bind();
+
+                if (hasNormalMapPath) {
+                    Texture normalMapTexture = textureCache.getTexture(normalMapPath);
+                    glActiveTexture(GL_TEXTURE1);
+                    normalMapTexture.bind();
+                }
 
                 for (Mesh mesh : material.getMeshes()) {
                     glBindVertexArray(mesh.getVaoID());
@@ -133,6 +160,7 @@ public class SceneRender {
             }
         }
 
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindVertexArray(0);
 
         shaderProgram.unbind();

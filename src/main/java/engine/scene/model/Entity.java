@@ -27,6 +27,8 @@ public class Entity {
     public Quaternionf getRotation() { return rotation; }
     public float getScale() { return scale; }
 
+    public final void setPosition(Vector3f position) { this.position.set(position.x, position.y, position.z); }
+
     public final void setPosition(float x, float y, float z) {
         position.x = x;
         position.y = y;
