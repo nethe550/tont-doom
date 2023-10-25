@@ -1,6 +1,7 @@
 package engine.graph.render;
 
 import org.lwjgl.opengl.GL30;
+
 import engine.util.Util;
 
 import java.util.ArrayList;

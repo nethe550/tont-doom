@@ -1,7 +1,8 @@
 package engine.scene.model;
 
-import engine.graph.model.Model;
 import org.joml.Matrix4f;
+
+import engine.graph.model.Model;
 
 import java.util.Arrays;
 

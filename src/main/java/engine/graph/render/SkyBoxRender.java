@@ -1,12 +1,11 @@
 package engine.graph.render;
 
-import engine.graph.model.Material;
-import engine.graph.model.Mesh;
-import engine.graph.model.Model;
+import org.joml.Matrix4f;
+
+import engine.graph.model.*;
 import engine.scene.Scene;
 import engine.scene.SkyBox;
 import engine.scene.model.Entity;
-import org.joml.Matrix4f;
 
 import java.util.*;
 

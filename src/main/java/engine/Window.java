@@ -1,8 +1,9 @@
 package engine;
 
-import engine.input.MouseInput;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryUtil;
+
+import engine.input.MouseInput;
 
 import java.util.concurrent.Callable;
 

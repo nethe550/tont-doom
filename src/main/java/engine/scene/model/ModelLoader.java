@@ -1,18 +1,18 @@
 package engine.scene.model;
 
-import engine.graph.model.*;
-import engine.graph.render.TextureCache;
-import engine.util.Util;
-
 import org.joml.*;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 
+import engine.graph.model.*;
+import engine.graph.render.TextureCache;
+import engine.util.Util;
+
 import java.io.File;
-import java.lang.Math;
 import java.io.IOException;
+import java.lang.Math;
 import java.nio.IntBuffer;
 import java.util.*;
 

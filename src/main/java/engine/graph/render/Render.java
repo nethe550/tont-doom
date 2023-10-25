@@ -12,7 +12,7 @@ public class Render {
     public final SceneRender sceneRender;
     private final SkyBoxRender skyBoxRender;
 
-    public Render(Window window) {
+    public Render() {
         GL.createCapabilities();
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);

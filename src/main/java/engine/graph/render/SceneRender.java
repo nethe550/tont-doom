@@ -1,17 +1,12 @@
 package engine.graph.render;
 
-import engine.graph.model.Material;
-import engine.graph.model.Mesh;
-import engine.graph.model.Model;
+import org.joml.*;
+
+import engine.graph.model.*;
 import engine.scene.Fog;
 import engine.scene.light.*;
-import engine.scene.model.AnimationData;
-import engine.scene.model.Entity;
+import engine.scene.model.*;
 import engine.scene.Scene;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.Collection;

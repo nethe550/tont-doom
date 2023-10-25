@@ -1,11 +1,10 @@
 package engine.scene;
 
 import engine.graph.model.Model;
+import engine.scene.model.Entity;
 import engine.graph.render.TextureCache;
 import engine.scene.light.SceneLights;
-import engine.scene.model.Entity;
-import engine.scene.view.Camera;
-import engine.scene.view.Projection;
+import engine.scene.view.*;
 
 import java.util.HashMap;
 import java.util.Map;

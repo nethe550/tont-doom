@@ -3,8 +3,7 @@ package engine.graph.model;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -20,7 +19,7 @@ public class Mesh {
     private List<Integer> vboIDList;
 
     public Mesh(MeshData data) {
-        initGL(data.positions, data.texcoords, data.indices, data.normals, data.tangents, data.bitangents, data.boneIndices, data.weights);
+        this(data.positions, data.texcoords, data.indices, data.normals, data.tangents, data.bitangents, data.boneIndices, data.weights);
     }
 
     public Mesh(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents) {

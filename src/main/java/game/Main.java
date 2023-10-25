@@ -1,26 +1,17 @@
 package game;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import engine.*;
 import engine.graph.model.Model;
 import engine.graph.render.Render;
-import engine.input.MouseInput;
-import engine.scene.Fog;
-import engine.scene.SkyBox;
-import engine.scene.light.PointLight;
-import engine.scene.light.SceneLights;
-import engine.scene.light.SpotLight;
-import engine.scene.model.AnimationData;
-import engine.scene.view.Camera;
-import engine.scene.model.Entity;
-import engine.scene.model.ModelLoader;
-import engine.scene.Scene;
-import engine.scene.view.Projection;
-import engine.sound.SoundBuffer;
-import engine.sound.SoundListener;
-import engine.sound.SoundManager;
-import engine.sound.SoundSource;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import engine.input.*;
+import engine.scene.*;
+import engine.scene.light.*;
+import engine.scene.view.*;
+import engine.scene.model.*;
+import engine.sound.*;
 
 import java.io.IOException;
 
