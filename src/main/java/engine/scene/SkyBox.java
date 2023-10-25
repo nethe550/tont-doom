@@ -13,7 +13,7 @@ public class SkyBox {
     private Model model;
 
     public SkyBox(String skyBoxModelPath, TextureCache textureCache) throws IOException {
-        model = ModelLoader.loadModel("skybox-model", skyBoxModelPath, textureCache);
+        model = ModelLoader.loadModel("skybox-model", skyBoxModelPath, textureCache, false);
         entity = new Entity("skybox-entity", model.getID());
     }
 

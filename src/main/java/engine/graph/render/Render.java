@@ -1,20 +1,20 @@
 package engine.graph.render;
 
 import engine.Window;
-import engine.graph.ui.GuiRender;
 import engine.scene.Scene;
 
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13C.GL_MULTISAMPLE;
 
 public class Render {
 
     public final SceneRender sceneRender;
-    private final GuiRender guiRender;
     private final SkyBoxRender skyBoxRender;
 
     public Render(Window window) {
         GL.createCapabilities();
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -22,19 +22,15 @@ public class Render {
         glEnable(GL_BLEND);
 
         sceneRender = new SceneRender();
-        guiRender = new GuiRender(window);
         skyBoxRender = new SkyBoxRender();
     }
 
     public void cleanup() {
         sceneRender.cleanup();
-        guiRender.cleanup();
         skyBoxRender.cleanup();
     }
 
-    public void resize(int width, int height) {
-        guiRender.resize(width, height);
-    }
+    public void resize(int width, int height) {}
 
     public void update(int width, int height, float diffTimeMillis) {
         sceneRender.update(diffTimeMillis, width, height);
@@ -46,7 +42,6 @@ public class Render {
 
         skyBoxRender.render(scene);
         sceneRender.render(scene);
-        guiRender.render(scene);
     }
 
 }

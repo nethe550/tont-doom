@@ -11,21 +11,27 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
-    public record MeshData(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents) {}
+    public static final int MAX_WEIGHTS = 4;
+
+    public record MeshData(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents, int[] boneIndices, float[] weights) {}
 
     private int numVertices;
     private int vaoID;
     private List<Integer> vboIDList;
 
     public Mesh(MeshData data) {
-        initGL(data.positions, data.texcoords, data.indices, data.normals, data.tangents, data.bitangents);
+        initGL(data.positions, data.texcoords, data.indices, data.normals, data.tangents, data.bitangents, data.boneIndices, data.weights);
     }
 
     public Mesh(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents) {
-        initGL(positions, texcoords, indices, normals, tangents, bitangents);
+        this(positions, texcoords, indices, normals, tangents, bitangents, new int[Mesh.MAX_WEIGHTS * positions.length / 3], new float[Mesh.MAX_WEIGHTS * positions.length / 3]);
     }
 
-    private void initGL(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents) {
+    public Mesh(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents, int[] boneIndices, float[] weights) {
+        initGL(positions, texcoords, indices, normals, tangents, bitangents, boneIndices, weights);
+    }
+
+    private void initGL(float[] positions, float[] texcoords, int[] indices, float[] normals, float[] tangents, float[] bitangents, int[] boneIndices, float[] weights) {
         this.numVertices = indices.length;
         vboIDList = new ArrayList<>();
 
@@ -86,6 +92,26 @@ public class Mesh {
         glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4, 2, GL_FLOAT, false, 0, 0);
+
+        // bone weights
+        vboID = glGenBuffers();
+        vboIDList.add(vboID);
+        FloatBuffer weightsBuffer = BufferUtils.createFloatBuffer(weights.length);
+        weightsBuffer.put(weights).flip();
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, weightsBuffer, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 4, GL_FLOAT, false, 0, 0);
+
+        // bone indices
+        vboID = glGenBuffers();
+        vboIDList.add(vboID);
+        IntBuffer boneIndicesBuffer = BufferUtils.createIntBuffer(boneIndices.length);
+        boneIndicesBuffer.put(boneIndices).flip();
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, boneIndicesBuffer, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 4, GL_FLOAT, false, 0, 0);
 
         // indices
         vboID = glGenBuffers();

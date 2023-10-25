@@ -27,6 +27,7 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
+        if (opts.antiAliasing) glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
@@ -117,6 +118,7 @@ public class Window {
         public int ups = Engine.TARGET_UPS;
         public int width = 640;
         public int height = 480;
+        public boolean antiAliasing = true;
 
         public WindowOptions(int width, int height) {
             this.width = width;
@@ -142,6 +144,15 @@ public class Window {
             this.fps = fps;
             this.ups = ups;
             this.compatibleProfile = compatibleProfile;
+        }
+
+        public WindowOptions(int width, int height, int fps, int ups, boolean compatibleProfile, boolean antiAliasing) {
+            this.width = width;
+            this.height = height;
+            this.fps = fps;
+            this.ups = ups;
+            this.compatibleProfile = compatibleProfile;
+            this.antiAliasing = antiAliasing;
         }
     }
 

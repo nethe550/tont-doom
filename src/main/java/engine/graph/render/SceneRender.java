@@ -5,6 +5,7 @@ import engine.graph.model.Mesh;
 import engine.graph.model.Model;
 import engine.scene.Fog;
 import engine.scene.light.*;
+import engine.scene.model.AnimationData;
 import engine.scene.model.Entity;
 import engine.scene.Scene;
 import org.joml.Matrix4f;
@@ -47,6 +48,7 @@ public class SceneRender {
         u.createUniform("projectionMatrix");
         u.createUniform("viewMatrix");
         u.createUniform("modelMatrix");
+        u.createUniform("boneMatrices");
 
         u.createUniform("texSampler");
         u.createUniform("normalTexSampler");
@@ -154,6 +156,9 @@ public class SceneRender {
                     glBindVertexArray(mesh.getVaoID());
                     for (Entity entity : entities) {
                         uniforms.setUniform("modelMatrix", entity.getModelMatrix());
+                        AnimationData animData = entity.getAnimationData();
+                        if (animData == null) uniforms.setUniform("boneMatrices", AnimationData.DEFAULT_BONES_MATRICES);
+                        else uniforms.setUniform("boneMatrices", animData.getCurrentFrame().boneMatrices());
                         glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
                     }
                 }

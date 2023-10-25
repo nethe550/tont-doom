@@ -6,7 +6,6 @@ import engine.scene.light.SceneLights;
 import engine.scene.model.Entity;
 import engine.scene.view.Camera;
 import engine.scene.view.Projection;
-import engine.ui.IGUIInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +17,6 @@ public class Scene {
 
     private final Projection projection;
     private final Camera camera;
-
-    private IGUIInstance guiInstance;
 
     private SceneLights sceneLights;
     private Fog fog;
@@ -48,12 +45,10 @@ public class Scene {
     public TextureCache getTextureCache() { return textureCache; }
     public Projection getProjection() { return projection; }
     public Camera getCamera() { return camera; }
-    public IGUIInstance getGUIInstance() { return guiInstance; }
     public SceneLights getSceneLights() { return sceneLights; }
     public Fog getFog() { return fog; }
     public SkyBox getSkyBox() { return skyBox; }
 
-    public void setGUIInstance(IGUIInstance guiInstance) { this.guiInstance = guiInstance; }
     public void setSceneLights(SceneLights sceneLights) { this.sceneLights = sceneLights; }
     public void setFog(Fog fog) { this.fog = fog; }
     public void setSkyBox(SkyBox skyBox) { this.skyBox = skyBox; }

@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.FloatBuffer;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -59,6 +60,15 @@ public class Uniforms {
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             glUniformMatrix4fv(getUniformLocation(uniformName), false, value.get(stack.mallocFloat(16)));
+        }
+    }
+
+    public void setUniform(String uniformName, Matrix4f[] values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            int length = values != null ? values.length : 0;
+            FloatBuffer buf = stack.mallocFloat(16 * length);
+            for (int i = 0; i < length; i++) { values[i].get(16 * i, buf); }
+            glUniformMatrix4fv(getUniformLocation(uniformName), false, buf);
         }
     }
 

@@ -2,7 +2,6 @@ package engine;
 
 import engine.graph.render.Render;
 import engine.scene.Scene;
-import engine.ui.IGUIInstance;
 
 public class Engine {
 
@@ -52,7 +51,6 @@ public class Engine {
         float deltaUpdate = 0;
         float deltaFPS = 0;
 
-        IGUIInstance iGuiInstance = scene.getGUIInstance();
         long updateTime = time;
         while (running && !window.windowShouldClose()) {
             window.pollEvents();
@@ -63,8 +61,7 @@ public class Engine {
 
             if (targetFPS <= 0 || deltaFPS >= 1) {
                 window.getMouseInput().input();
-                boolean inputConsumed = iGuiInstance != null && iGuiInstance.handleGUIInput(scene, window);
-                appLogic.input(window, scene, now - time, inputConsumed);
+                appLogic.input(window, scene, now - time, false);
             }
 
             if (deltaUpdate >= 1) {

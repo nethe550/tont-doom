@@ -5,7 +5,6 @@ plugins {
 
 project.ext.lwjglVersion = "3.3.3"
 project.ext.lwjglNatives = "natives-windows"
-project.ext.imguiVersion = "1.86.10"
 
 group 'com.tont'
 version '1.0-SNAPSHOT'
@@ -20,12 +19,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 
     implementation 'org.joml:joml:1.10.5'
-
-    implementation "io.github.spair:imgui-java-binding:$imguiVersion"
-    implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
-
-    implementation "io.github.spair:imgui-java-$lwjglNatives:$imguiVersion"
-    //implementation 'com.github.SpaiR:imgui-java:85e198f'
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
