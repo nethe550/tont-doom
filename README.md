@@ -1,2 +1,3 @@
 # tont-doom
-doom tont
+A DOOM-like game built on a crappy homemade game engine.
+![screenshot.png](https://github.com/nethe550/tont-doom/blob/main/media/screenshot.png?raw=true)
