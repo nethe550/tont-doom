@@ -6,7 +6,7 @@ public class Projection {
 
     public static final float FOV = (float) Math.toRadians(70.0f);
     public static final float Z_NEAR = 0.01f;
-    public static final float Z_FAR = 1000.0f;
+    public static final float Z_FAR = 256.0f;
 
     private Matrix4f matrix;
 

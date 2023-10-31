@@ -2,8 +2,6 @@ package engine.graph.render.scene;
 
 import engine.graph.render.shader.ShaderProgram;
 import engine.graph.render.shader.Uniforms;
-import engine.graph.render.shadow.CascadeShadow;
-import engine.graph.render.shadow.ShadowRender;
 import engine.graph.render.texture.Texture;
 import engine.graph.render.texture.TextureCache;
 import org.joml.*;
@@ -98,12 +96,6 @@ public class SceneRender {
         u.createUniform("fog.fogActive");
         u.createUniform("fog.color");
         u.createUniform("fog.density");
-
-        for (int i = 0; i < CascadeShadow.SHADOW_MAP_CASCADE_COUNT; i++) {
-            u.createUniform("shadowMap_" + i);
-            u.createUniform("cascadeShadows[" + i + "].projectionViewMatrix");
-            u.createUniform("cascadeShadows[" + i + "].splitDistance");
-        }
         return u;
     }
 
@@ -113,7 +105,7 @@ public class SceneRender {
         this.height = (float) height;
     }
 
-    public void render(Scene scene, ShadowRender shadowRender) {
+    public void render(Scene scene) {
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -125,17 +117,6 @@ public class SceneRender {
         uniforms.setUniform("normalTexSampler", 1);
 
         updateLights(scene);
-
-        int start = 2;
-        List<CascadeShadow> cascadeShadows = shadowRender.getCascadeShadows();
-        for (int i = 0; i < CascadeShadow.SHADOW_MAP_CASCADE_COUNT; i++) {
-            uniforms.setUniform("shadowMap_" + i, start + i);
-            CascadeShadow cascadeShadow = cascadeShadows.get(i);
-            uniforms.setUniform("cascadeShadows[" + i + "].projectionViewMatrix", cascadeShadow.getProjectionViewMatrix());
-            uniforms.setUniform("cascadeShadows[" + i + "].splitDistance", cascadeShadow.getSplitDistance());
-        }
-
-        shadowRender.getShadowBuffer().bindTextures(GL_TEXTURE2);
 
         Fog fog = scene.getFog();
         uniforms.setUniform("fog.fogActive", fog.getActive() ? 1 : 0);
