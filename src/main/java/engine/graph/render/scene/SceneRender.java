@@ -1,5 +1,11 @@
-package engine.graph.render;
+package engine.graph.render.scene;
 
+import engine.graph.render.shader.ShaderProgram;
+import engine.graph.render.shader.Uniforms;
+import engine.graph.render.shadow.CascadeShadow;
+import engine.graph.render.shadow.ShadowRender;
+import engine.graph.render.texture.Texture;
+import engine.graph.render.texture.TextureCache;
 import org.joml.*;
 
 import engine.graph.model.*;
@@ -92,6 +98,12 @@ public class SceneRender {
         u.createUniform("fog.fogActive");
         u.createUniform("fog.color");
         u.createUniform("fog.density");
+
+        for (int i = 0; i < CascadeShadow.SHADOW_MAP_CASCADE_COUNT; i++) {
+            u.createUniform("shadowMap_" + i);
+            u.createUniform("cascadeShadows[" + i + "].projectionViewMatrix");
+            u.createUniform("cascadeShadows[" + i + "].splitDistance");
+        }
         return u;
     }
 
@@ -101,7 +113,7 @@ public class SceneRender {
         this.height = (float) height;
     }
 
-    public void render(Scene scene) {
+    public void render(Scene scene, ShadowRender shadowRender) {
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -113,6 +125,17 @@ public class SceneRender {
         uniforms.setUniform("normalTexSampler", 1);
 
         updateLights(scene);
+
+        int start = 2;
+        List<CascadeShadow> cascadeShadows = shadowRender.getCascadeShadows();
+        for (int i = 0; i < CascadeShadow.SHADOW_MAP_CASCADE_COUNT; i++) {
+            uniforms.setUniform("shadowMap_" + i, start + i);
+            CascadeShadow cascadeShadow = cascadeShadows.get(i);
+            uniforms.setUniform("cascadeShadows[" + i + "].projectionViewMatrix", cascadeShadow.getProjectionViewMatrix());
+            uniforms.setUniform("cascadeShadows[" + i + "].splitDistance", cascadeShadow.getSplitDistance());
+        }
+
+        shadowRender.getShadowBuffer().bindTextures(GL_TEXTURE2);
 
         Fog fog = scene.getFog();
         uniforms.setUniform("fog.fogActive", fog.getActive() ? 1 : 0);
@@ -152,15 +175,14 @@ public class SceneRender {
                     for (Entity entity : entities) {
                         uniforms.setUniform("modelMatrix", entity.getModelMatrix());
                         AnimationData animData = entity.getAnimationData();
-                        if (animData == null) uniforms.setUniform("boneMatrices", AnimationData.DEFAULT_BONES_MATRICES);
-                        else uniforms.setUniform("boneMatrices", animData.getCurrentFrame().boneMatrices());
+                        uniforms.setUniform("boneMatrices", animData == null ? AnimationData.DEFAULT_BONES_MATRICES : animData.getCurrentFrame().boneMatrices());
+
                         glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
                     }
                 }
             }
         }
 
-        glBindTexture(GL_TEXTURE_2D, 0);
         glBindVertexArray(0);
 
         shaderProgram.unbind();

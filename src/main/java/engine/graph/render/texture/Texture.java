@@ -1,4 +1,4 @@
-package engine.graph.render;
+package engine.graph.render.texture;
 
 import org.lwjgl.system.MemoryStack;
 

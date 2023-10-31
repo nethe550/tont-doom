@@ -1,4 +1,4 @@
-package engine.graph.render;
+package engine.graph.render.shader;
 
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;

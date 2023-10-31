@@ -1,4 +1,4 @@
-package engine.graph.render;
+package engine.graph.render.shader;
 
 import org.lwjgl.opengl.GL30;
 
@@ -50,7 +50,7 @@ public class ShaderProgram {
 
     private void link(List<Integer> shaderModules) {
         glLinkProgram(programID);
-        if (glGetProgrami(programID, GL_LINK_STATUS) == 0) throw new RuntimeException("Failed to link shader: " + glGetShaderInfoLog(programID, 1024));
+        if (glGetProgrami(programID, GL_LINK_STATUS) == 0) throw new RuntimeException("Failed to link shader: " + glGetProgramInfoLog(programID, 1024));
 
         shaderModules.forEach(s -> glDetachShader(programID, s));
         shaderModules.forEach(GL30::glDeleteShader);

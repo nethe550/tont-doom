@@ -2,7 +2,7 @@ package engine.scene;
 
 import engine.graph.model.Model;
 import engine.scene.model.Entity;
-import engine.graph.render.TextureCache;
+import engine.graph.render.texture.TextureCache;
 import engine.scene.light.SceneLights;
 import engine.scene.view.*;
 

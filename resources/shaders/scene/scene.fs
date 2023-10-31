@@ -4,7 +4,13 @@ const int MAX_POINT_LIGHTS = 16;
 const int MAX_SPOT_LIGHTS = 16;
 const float SPECULAR_POWER = 10;
 
-in vec3 outPosition;
+const int DEBUG_SHADOWS = 0; // shadow cascade identification (0 | 1)
+const int NUM_SHADOW_CASCADES = 3;
+const float SHADOW_BIAS = 0.0005;
+const float SHADOW_FACTOR = 0.25;
+
+in vec3 outViewPosition;
+in vec4 outWorldPosition;
 in vec3 outNormal;
 in vec3 outTangent;
 in vec3 outBitangent;
@@ -58,11 +64,21 @@ struct Fog
     vec3 color;
     float density;
 };
+struct CascadeShadow
+{
+    mat4 projectionViewMatrix;
+    float splitDistance;
+};
 
 uniform sampler2D texSampler;
 uniform sampler2D normalTexSampler;
 uniform float timeElapsed;
 uniform vec2 resolution;
+
+uniform CascadeShadow cascadeShadows[NUM_SHADOW_CASCADES];
+uniform sampler2D shadowMap_0;
+uniform sampler2D shadowMap_1;
+uniform sampler2D shadowMap_2;
 
 uniform Material material;
 uniform AmbientLight ambientLight;
@@ -70,6 +86,31 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform DirectionalLight directionalLight;
 uniform Fog fog;
+
+float worldPositionToShadowNDC(vec4 worldPosition, vec2 offset, int cascadeIndex)
+{
+    float shadow = 1.0;
+
+    if (worldPosition.z > -1.0 && worldPosition.z < 1.0)
+    {
+        float dist = 0.0;
+        if (cascadeIndex == 0) dist = texture(shadowMap_0, vec2(worldPosition.xy + offset)).r;
+        else if (cascadeIndex == 1) dist = texture(shadowMap_1, vec2(worldPosition.xy + offset)).r;
+        else if (cascadeIndex == 2) dist = texture(shadowMap_2, vec2(worldPosition.xy + offset)).r;
+
+        if (worldPosition.w > 0.0 && dist < worldPosition.z - SHADOW_BIAS) shadow = SHADOW_FACTOR;
+    }
+    return shadow;
+}
+
+float calcShadow(vec4 worldPosition, int cascadeIndex)
+{
+    vec4 shadowMapPosition = cascadeShadows[cascadeIndex].projectionViewMatrix * worldPosition;
+    float shadow = 1.0;
+    vec4 shadowCoord = (shadowMapPosition / shadowMapPosition.w) * 0.5 + 0.5;
+    shadow = worldPositionToShadowNDC(shadowCoord, vec2(0.0, 0.0), cascadeIndex);
+    return shadow;
+}
 
 vec4 calcAmbient(AmbientLight ambientLight, vec4 ambient)
 {
@@ -161,20 +202,52 @@ void main()
     vec3 normal = outNormal;
     if (material.hasNormalMap > 0) normal = calcNormal(outNormal, outTangent, outBitangent, outTexCoord);
 
-    vec4 diffuseSpecularComp = calcDirectionalLight(diffuse, specular, directionalLight, outPosition, normal);
+    vec4 diffuseSpecularComp = calcDirectionalLight(diffuse, specular, directionalLight, outViewPosition, normal);
+
+    int cascadeIndex;
+    for (int i = 0; i < NUM_SHADOW_CASCADES - 1; i++) {
+        if (outViewPosition.z < cascadeShadows[i].splitDistance) {
+            cascadeIndex = i + 1;
+            break;
+        }
+    }
+    float shadowFactor = calcShadow(outWorldPosition, cascadeIndex);
 
     for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
         if (pointLights[i].intensity > 0) {
-            diffuseSpecularComp += calcPointLight(diffuse, specular, pointLights[i], outPosition, normal);
+            diffuseSpecularComp += calcPointLight(diffuse, specular, pointLights[i], outViewPosition, normal);
         }
     }
 
     for (int i = 0; i < MAX_SPOT_LIGHTS; i++) {
         if (spotLights[i].intensity > 0) {
-            diffuseSpecularComp += calcSpotLight(diffuse, specular, spotLights[i], outPosition, normal);
+            diffuseSpecularComp += calcSpotLight(diffuse, specular, spotLights[i], outViewPosition, normal);
         }
     }
 
     fragColor = ambient + diffuseSpecularComp;
-    if (fog.fogActive == 1) fragColor = calcFog(outPosition, fragColor, fog, ambientLight.color, directionalLight);
+    fragColor.rgb *= shadowFactor;
+    if (fog.fogActive == 1) fragColor = calcFog(outViewPosition, fragColor, fog, ambientLight.color, directionalLight);
+
+    if (DEBUG_SHADOWS == 1)
+    {
+        switch (cascadeIndex)
+        {
+            case 0:
+                fragColor.rgb *= vec3(1.0, 0.25, 0.25);
+                break;
+            case 1:
+                fragColor.rgb *= vec3(0.25, 1.0, 0.25);
+                break;
+            case 2:
+                fragColor.rgb *= vec3(0.25, 0.25, 1.0);
+                break;
+            case 3:
+                fragColor.rgb *= vec3(1.0, 0.25, 1.0);
+                break;
+            default:
+                fragColor.rgb *= vec3(0.5, 0.25, 1.0);
+                break;
+        }
+    }
 }

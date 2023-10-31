@@ -111,7 +111,7 @@ public class Main implements IAppLogic {
 
         SceneLights sceneLights = new SceneLights();
         sceneLights.getAmbient().setIntensity(0.1f);
-        sceneLights.getDirectional().setDirection(0.0f, 0.65f, 0.75f);
+        sceneLights.getDirectional().setDirection(0.25f, 1.25f, 0.275f);
         sceneLights.getDirectional().setColor(1.0f, 0.99f, 0.93f);
         scene.setSceneLights(sceneLights);
 

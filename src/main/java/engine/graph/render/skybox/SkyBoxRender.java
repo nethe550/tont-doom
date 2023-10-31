@@ -1,5 +1,9 @@
-package engine.graph.render;
+package engine.graph.render.skybox;
 
+import engine.graph.render.shader.ShaderProgram;
+import engine.graph.render.shader.Uniforms;
+import engine.graph.render.texture.Texture;
+import engine.graph.render.texture.TextureCache;
 import org.joml.Matrix4f;
 
 import engine.graph.model.*;

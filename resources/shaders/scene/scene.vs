@@ -1,7 +1,7 @@
 #version 330
 
-const int MAX_WEIGHTS = 4; // from Mesh.java
-const int MAX_BONES = 128; // from ModelLoader.java
+const int MAX_WEIGHTS = 4;
+const int MAX_BONES = 128;
 
 layout (location=0) in vec3 position;
 layout (location=1) in vec3 normal;
@@ -11,7 +11,8 @@ layout (location=4) in vec2 texcoord;
 layout (location=5) in vec4 boneWeights;
 layout (location=6) in ivec4 boneIndices;
 
-out vec3 outPosition;
+out vec3 outViewPosition;
+out vec4 outWorldPosition;
 out vec3 outNormal;
 out vec3 outTangent;
 out vec3 outBitangent;
@@ -61,7 +62,8 @@ void main()
 
     gl_Position = projectionMatrix * mvPosition;
 
-    outPosition = mvPosition.xyz;
+    outViewPosition = mvPosition.xyz;
+    outWorldPosition = modelMatrix * initPos;
     outNormal = normalize(modelViewMatrix * initNormal).xyz;
     outTangent = normalize(modelViewMatrix * initTangent).xyz;
     outBitangent = normalize(modelViewMatrix * initBitangent).xyz;
