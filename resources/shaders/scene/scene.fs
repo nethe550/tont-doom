@@ -178,7 +178,7 @@ void main()
     }
 
     vec4 color = ambient + diffuseSpecularComp;
-    fragColor = vec4(color.rgb, texColor.a);
+    if (billboard == 0) fragColor = vec4(color.rgb, texColor.a);
+    else fragColor = texColor;
     if (fog.fogActive == 1) fragColor = calcFog(outViewPosition, fragColor, fog, ambientLight.color, directionalLight);
-    if (billboard == 1) fragColor = texColor;
 }

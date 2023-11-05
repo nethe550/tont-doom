@@ -98,8 +98,8 @@ public class Level {
                         scene.getCamera(),
                         data.environment.entities[i].id,
                         data.environment.entities[i].model,
-                        data.environment.entities[i].billboard.axes.x,
-                        data.environment.entities[i].billboard.axes.y
+                        data.environment.entities[i].billboard.x,
+                        data.environment.entities[i].billboard.y
                 );
                 handleEntity(i, data, bentity);
             }
@@ -234,18 +234,11 @@ public class Level {
         public int activeSource = -1;
     }
 
-    private static class Axes {
+    private static class Billboard {
         @JsonProperty("x")
         public boolean x;
         @JsonProperty("y")
         public boolean y;
-    }
-
-    private static class Billboard {
-        @JsonProperty("is")
-        public boolean is = false;
-        @JsonProperty("axes")
-        public Axes axes;
     }
 
     private static class Entity {
