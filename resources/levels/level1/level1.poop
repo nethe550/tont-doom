@@ -1,0 +1,100 @@
+{
+    "name": "level1",
+    "environment": {
+        "skybox": {
+            "active": true,
+            "src": "resources/levels/level1/skybox/skybox.obj",
+            "scale": 100.0
+        },
+        "fog": {
+            "active": true,
+            "color": [0.1, 0.1, 0.2 ],
+            "density": 0.05
+        },
+        "lights": {
+            "ambient": {
+                "intensity": 0.1,
+                "color": [ 1.0, 1.0, 1.0 ]
+            },
+            "directional": {
+                "intensity": 1.0,
+                "direction": [ 0.191, 0.958, 0.210 ],
+                "color": [ 1.0, 0.99, 0.93 ]
+            },
+            "points": [
+                {
+                    "intensity": 1.0,
+                    "position": [ -9.14, 1.15, -1.65 ],
+                    "color": [ 1.0, 0.0, 0.0 ]
+                },
+                {
+                    "intensity": 1.0,
+                    "position": [ -11.0, 1.15, -3.0 ],
+                    "color": [ 0.5, 0.0, 1.0 ]
+                }
+            ],
+            "spots": [
+                {
+                    "intensity": 6.0,
+                    "innerCutoff": 20.0,
+                    "outerCutoff": 40.0,
+                    "position": [ -9.8, 1.5, 1.25 ],
+                    "direction": [ 0.0, -0.707, -0.707 ],
+                    "color": [ 0.35, 0.48, 1.0 ]
+                }
+            ]
+        },
+        "models": [
+            {
+                "id": "testmap-model",
+                "src": "resources/levels/level1/models/testmap/testmap.obj",
+                "anim": false
+            },
+            {
+                "id": "bob-model",
+                "src": "resources/levels/level1/models/bob/boblamp.md5mesh",
+                "anim": true
+            },
+            {
+                "id": "monkey-model",
+                "src": "resources/levels/level1/models/monkey/monkey.obj",
+                "anim": false
+            },
+            {
+                "id": "turret-model",
+                "src": "resources/levels/level1/models/turret/turret.obj",
+                "anim": false
+            }
+        ],
+        "entities": [
+            {
+                "id": "testmap-entity",
+                "model": "testmap-model",
+                "position": [ 0.0, 0.0, 0.0 ],
+                "rotation": [ 0.0, 1.0, 0.0, 0.0 ],
+                "scale": 1.0
+            },
+            {
+                "id": "bob-entity",
+                "model": "bob-model",
+                "position": [ 2.25, 0.0, -1.0 ],
+                "rotation": [ 0.0, 1.0, 0.0, 0.0],
+                "scale": 0.025
+            },
+            {
+                "id": "monkey-entity",
+                "model": "monkey-model",
+                "position": [ -1.0, 1.0, -1.0 ],
+                "rotation": [ 0.0, 1.0, 0.0, 0.0],
+                "scale": 1.0
+            },
+            {
+                "id": "turret-entity",
+                "model": "turret-model",
+                "position": [ -10.0, 0.0, 3.0 ],
+                "rotation": [ 0.0, 1.0, 0.0, 225.0 ],
+                "scale": 1.0
+            }
+        ]
+    }
+}

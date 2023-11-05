@@ -5,6 +5,8 @@ import engine.scene.model.Entity;
 import engine.graph.render.texture.TextureCache;
 import engine.scene.light.SceneLights;
 import engine.scene.view.*;
+import engine.sound.SoundListener;
+import engine.sound.SoundManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,8 @@ public class Scene {
     private final Projection projection;
     private final Camera camera;
 
+    private final SoundManager soundManager;
+
     private SceneLights sceneLights;
     private Fog fog;
 
@@ -28,6 +32,8 @@ public class Scene {
         projection = new Projection(width, height);
         camera = new Camera();
         fog = new Fog();
+        soundManager = new SoundManager();
+        soundManager.setListener(new SoundListener(camera.getPosition()));
     }
 
     public void addEntity(Entity entity) {
@@ -41,9 +47,13 @@ public class Scene {
         modelMap.put(model.getID(), model);
     }
 
+    public Map<String, Model> getModelMap() { return modelMap; }
+    public Model getModel(String id) { return modelMap.get(id); }
+
     public TextureCache getTextureCache() { return textureCache; }
     public Projection getProjection() { return projection; }
     public Camera getCamera() { return camera; }
+    public SoundManager getSoundManager() { return soundManager; }
     public SceneLights getSceneLights() { return sceneLights; }
     public Fog getFog() { return fog; }
     public SkyBox getSkyBox() { return skyBox; }
@@ -57,9 +67,12 @@ public class Scene {
     }
 
     public void cleanup() {
-            modelMap.values().forEach(Model::cleanup);
+        modelMap.values().forEach(Model::cleanup);
+        soundManager.cleanup();
     }
 
-    public Map<String, Model> getModelMap() { return modelMap; }
+    public void update(float diffTimeMillis) {
+        soundManager.updateListenerPosition(camera);
+    }
 
 }

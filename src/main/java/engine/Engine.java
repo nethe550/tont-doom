@@ -1,6 +1,7 @@
 package engine;
 
 import engine.graph.render.Render;
+import engine.level.Level;
 import engine.scene.Scene;
 
 public class Engine {
@@ -10,12 +11,12 @@ public class Engine {
     private final IAppLogic appLogic;
     private final Window window;
     private Render render;
+    private Level level;
     private boolean running;
-    private Scene scene;
     private int targetFPS;
     private int targetUPS;
 
-    public Engine(String windowTitle, Window.WindowOptions opts, IAppLogic appLogic) {
+    public Engine(String windowTitle, Window.WindowOptions opts, IAppLogic appLogic, Level level) {
         window = new Window(windowTitle, opts, () -> {
             resize();
             return null;
@@ -24,22 +25,23 @@ public class Engine {
         targetFPS = opts.fps;
         targetUPS = opts.ups;
         this.appLogic = appLogic;
+        this.level = level;
         render = new Render();
-        scene = new Scene(window.getWidth(), window.getHeight());
-        appLogic.init(window, scene, render);
+        this.level.load(window.getWidth(), window.getHeight());
+        appLogic.init(window, this.level.getScene(), render);
         running = true;
     }
 
     private void cleanup() {
         appLogic.cleanup();
         render.cleanup();
-        scene.cleanup();
+        level.getScene().cleanup();
         window.cleanup();
     }
 
     private void resize() {
         int width = window.getWidth(), height = window.getHeight();
-        scene.resize(width, height);
+        level.getScene().resize(width, height);
         render.resize(width, height);
     }
 
@@ -50,6 +52,8 @@ public class Engine {
         float timeR = targetFPS > 0 ? 1000.0f / targetFPS : 0;
         float deltaUpdate = 0;
         float deltaFPS = 0;
+
+        Scene scene = level.getScene();
 
         long updateTime = time;
         while (running && !window.windowShouldClose()) {
@@ -66,6 +70,7 @@ public class Engine {
 
             if (deltaUpdate >= 1) {
                 long diffTimeMillis = now - updateTime;
+                scene.update(diffTimeMillis);
                 appLogic.update(window, scene, diffTimeMillis);
                 render.update(window.getWidth(), window.getHeight(), diffTimeMillis);
                 updateTime = now;
