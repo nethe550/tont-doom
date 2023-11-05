@@ -23,10 +23,6 @@ public class Main implements IAppLogic {
 
     private static Level level1;
 
-    private SoundSource bobSoundSource;
-
-    private AnimationData animationData;
-
     public static void main(String[] args) {
         Instance = new Main();
 
@@ -48,28 +44,6 @@ public class Main implements IAppLogic {
         camera.moveUp(1.0f);
 
         level1.getScene().getModel("bob-model").getEntities().get(0).setAnimation(scene, 0);
-
-        initSounds();
-    }
-
-    private void initSounds() {
-        SoundManager soundManager = level1.getScene().getSoundManager();
-
-        SoundBuffer bobbuf = new SoundBuffer("resources/sounds/creak1.ogg", SoundBuffer.FileType.OGG);
-        soundManager.addSoundBuffer(bobbuf);
-
-        bobSoundSource = new SoundSource(false, false);
-        bobSoundSource.setPosition(level1.getScene().getModel("bob-model").getEntities().get(0).getPosition());
-        bobSoundSource.setBuffer(bobbuf.getBufferID());
-        soundManager.addSoundSource("creak", bobSoundSource);
-
-        bobbuf = new SoundBuffer("resources/sounds/woo_scary.ogg", SoundBuffer.FileType.OGG);
-        soundManager.addSoundBuffer(bobbuf);
-
-        SoundSource source = new SoundSource(true, true);
-        source.setBuffer(bobbuf.getBufferID());
-        soundManager.addSoundSource("music", source);
-        source.play();
     }
 
     @Override
@@ -94,8 +68,10 @@ public class Main implements IAppLogic {
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
-        animationData.nextFrame();
-        if (animationData.getCurrentFrameIndex() == 45) bobSoundSource.play();
+        Entity bobEntity = level1.getScene().getModel("bob-model").getEntities().get(0);
+        AnimationData bobAnimationData = bobEntity.getAnimationData();
+        bobAnimationData.nextFrame();
+        if (bobAnimationData.getCurrentFrameIndex() == 45) bobEntity.getSound().play();;
     }
 
 }

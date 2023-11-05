@@ -5,6 +5,8 @@ import org.lwjgl.stb.STBVorbisInfo;
 
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
@@ -15,6 +17,15 @@ public class SoundBuffer {
     public enum FileType {
         OGG
     };
+
+    public static final Map<String, FileType> StringToFileType;
+    static {
+        Map<String, FileType> stft = new HashMap<>();
+        for (FileType fileType : FileType.values()) {
+            stft.put(fileType.name().toLowerCase(), fileType);
+        }
+        StringToFileType = stft;
+    }
 
     private final int bufferID;
 

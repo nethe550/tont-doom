@@ -5,10 +5,15 @@ import engine.scene.Scene;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.scene.model.ModelLoader;
+import engine.sound.SoundBuffer;
+import engine.sound.SoundSource;
 import org.joml.Vector3f;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Level {
 
@@ -94,6 +99,30 @@ public class Level {
             entity.setPosition(doubleArrayToVector3f(data.environment.entities[i].position), false);
             entity.setRotation(doubleArrayToVector3f(data.environment.entities[i].rotation), (float) Math.toRadians(data.environment.entities[i].rotation[3]), false);
             entity.setScale((float) data.environment.entities[i].scale, false);
+            if (data.environment.entities[i].sound != null) {
+                List<SoundBuffer> bufs = new ArrayList<>();
+                for (String source : data.environment.entities[i].sound.sources) {
+                    String[] parts = source.split("\\.");
+                    SoundBuffer.FileType ft = SoundBuffer.StringToFileType.get(parts[parts.length - 1].trim().toLowerCase());
+                    if (ft == null) throw new RuntimeException("Failed to parse file type for entity sound source: \"" + source + "\".\nSupported types: " + String.join(", ", SoundBuffer.StringToFileType.keySet()));
+
+                    SoundBuffer sb = new SoundBuffer(source, ft);
+                    scene.getSoundManager().addSoundBuffer(sb);
+                    bufs.add(sb);
+                }
+
+                SoundSource ss = new SoundSource(
+                    data.environment.entities[i].sound.loop,
+                    data.environment.entities[i].sound.relative
+                );
+                if (data.environment.entities[i].sound.relative) ss.setPosition(0.0f, 0.0f, 0.0f);
+                else ss.setPosition(entity.getPosition());
+
+                entity.setSound(new engine.scene.model.Entity.Sound(data.environment.entities[i].id, ss, bufs, data.environment.entities[i].sound.activeSource));
+                scene.getSoundManager().addSoundSource(entity.getSound().getID(), entity.getSound().getSource());
+
+                if (data.environment.entities[i].sound.autoPlay) ss.play();
+            }
             entity.updateModelMatrix();
             scene.addEntity(entity);
         }
@@ -172,6 +201,21 @@ public class Level {
         public boolean anim;
     }
 
+    private static class Sound {
+        @JsonProperty("id")
+        public String id;
+        @JsonProperty("loop")
+        public boolean loop;
+        @JsonProperty("relative")
+        public boolean relative;
+        @JsonProperty("autoPlay")
+        public boolean autoPlay;
+        @JsonProperty("sources")
+        public String[] sources;
+        @JsonProperty("activeSource")
+        public int activeSource = -1;
+    }
+
     private static class Entity {
         @JsonProperty("id")
         public String id;
@@ -183,6 +227,8 @@ public class Level {
         public double[] rotation = new double[4];
         @JsonProperty("scale")
         public double scale = 1.0;
+        @JsonProperty("sound")
+        public Sound sound;
     }
 
     private static class Environment {

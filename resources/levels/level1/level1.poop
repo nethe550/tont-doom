@@ -8,7 +8,7 @@
         },
         "fog": {
             "active": true,
-            "color": [0.1, 0.1, 0.2 ],
+            "color": [ 0.1, 0.1, 0.2 ],
             "density": 0.05
         },
         "lights": {
@@ -72,14 +72,34 @@
                 "model": "testmap-model",
                 "position": [ 0.0, 0.0, 0.0 ],
                 "rotation": [ 0.0, 1.0, 0.0, 0.0 ],
-                "scale": 1.0
+                "scale": 1.0,
+                "sound": {
+                    "id": "soundtrack",
+                    "loop": true,
+                    "relative": true,
+                    "autoPlay": true,
+                    "sources": [
+                        "resources/sounds/woo_scary.ogg"
+                    ],
+                    "activeSource": 0
+                }
             },
             {
                 "id": "bob-entity",
                 "model": "bob-model",
                 "position": [ 2.25, 0.0, -1.0 ],
                 "rotation": [ 0.0, 1.0, 0.0, 0.0],
-                "scale": 0.025
+                "scale": 0.025,
+                "sound": {
+                    "id": "bob-sound",
+                    "loop": false,
+                    "relative": false,
+                    "autoPlay": false,
+                    "sources": [
+                        "resources/sounds/creak1.ogg"
+                    ],
+                    "activeSource": 0
+                }
             },
             {
                 "id": "monkey-entity",
@@ -91,7 +111,7 @@
             {
                 "id": "turret-entity",
                 "model": "turret-model",
-                "position": [ -10.0, 0.0, 3.0 ],
+                "position": [ -10.0, 0.0, -3.0 ],
                 "rotation": [ 0.0, 1.0, 0.0, 225.0 ],
                 "scale": 1.0
             }
