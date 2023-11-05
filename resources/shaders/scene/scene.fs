@@ -64,6 +64,7 @@ uniform sampler2D texSampler;
 uniform sampler2D normalTexSampler;
 uniform float timeElapsed;
 uniform vec2 resolution;
+uniform int billboard;
 
 uniform Material material;
 uniform AmbientLight ambientLight;
@@ -176,6 +177,8 @@ void main()
         }
     }
 
-    fragColor = ambient + diffuseSpecularComp;
+    vec4 color = ambient + diffuseSpecularComp;
+    fragColor = vec4(color.rgb, texColor.a);
     if (fog.fogActive == 1) fragColor = calcFog(outViewPosition, fragColor, fog, ambientLight.color, directionalLight);
+    if (billboard == 1) fragColor = texColor;
 }

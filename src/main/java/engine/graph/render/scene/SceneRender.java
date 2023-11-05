@@ -57,6 +57,8 @@ public class SceneRender {
         }
         catch (Exception ignored) {}
 
+        u.createUniform("billboard");
+
         u.createUniform("material.ambient");
         u.createUniform("material.diffuse");
         u.createUniform("material.specular");
@@ -154,6 +156,9 @@ public class SceneRender {
                 for (Mesh mesh : material.getMeshes()) {
                     glBindVertexArray(mesh.getVaoID());
                     for (Entity entity : entities) {
+                        if (entity instanceof BillboardEntity) uniforms.setUniform("billboard", 1);
+                        else uniforms.setUniform("billboard", 0);
+
                         uniforms.setUniform("modelMatrix", entity.getModelMatrix());
                         AnimationData animData = entity.getAnimationData();
                         uniforms.setUniform("boneMatrices", animData == null ? AnimationData.DEFAULT_BONES_MATRICES : animData.getCurrentFrame().boneMatrices());

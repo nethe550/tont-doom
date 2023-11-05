@@ -38,7 +38,6 @@ public class Render {
     }
 
     public void render(Window window, Scene scene) {
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0, 0, window.getWidth(), window.getHeight());
 

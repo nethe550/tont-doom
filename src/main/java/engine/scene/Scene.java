@@ -72,6 +72,11 @@ public class Scene {
     }
 
     public void update(float diffTimeMillis) {
+        for (Model model : modelMap.values()) {
+            for (Entity entity : model.getEntities()) {
+                entity.update();
+            }
+        }
         soundManager.updateListenerPosition(camera);
     }
 

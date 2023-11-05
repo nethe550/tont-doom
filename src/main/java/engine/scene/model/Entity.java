@@ -10,14 +10,14 @@ import java.util.List;
 
 public class Entity {
 
-    private final String id;
-    private final String modelID;
-    private Matrix4f modelMatrix;
-    private Vector3f position;
-    private Quaternionf rotation;
-    private float scale;
-    private AnimationData animationData;
-    private Sound sound;
+    protected final String id;
+    protected final String modelID;
+    protected Matrix4f modelMatrix;
+    protected Vector3f position;
+    protected Quaternionf rotation;
+    protected float scale;
+    protected AnimationData animationData;
+    protected Sound sound;
 
     public Entity(String id, String modelID) {
         this.id = id;
@@ -29,7 +29,7 @@ public class Entity {
     }
 
     public void update() {
-        sound.getSource().setPosition(position);
+        if (sound != null) sound.getSource().setPosition(position);
     }
 
     public String getID() { return id; }

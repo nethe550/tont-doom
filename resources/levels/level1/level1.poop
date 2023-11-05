@@ -64,6 +64,11 @@
                 "id": "turret-model",
                 "src": "resources/levels/level1/models/turret/turret.obj",
                 "anim": false
+            },
+            {
+                "id": "tont-model",
+                "src": "resources/levels/level1/models/tont/tont.obj",
+                "anim": false
             }
         ],
         "entities": [
@@ -114,6 +119,20 @@
                 "position": [ -10.0, 0.0, -3.0 ],
                 "rotation": [ 0.0, 1.0, 0.0, 225.0 ],
                 "scale": 1.0
+            },
+            {
+                "id": "tont-entity",
+                "model": "tont-model",
+                "position": [ 10.0, 0.0, -3.0 ],
+                "rotation": [ 0.0, 1.0, 0.0, 0.0 ],
+                "scale": 0.75,
+                "billboard": {
+                    "is": true,
+                    "axes": {
+                        "x": false,
+                        "y": true
+                    }
+                }
             }
         ]
     }
