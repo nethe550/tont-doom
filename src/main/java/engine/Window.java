@@ -1,5 +1,6 @@
 package engine;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -115,41 +116,33 @@ public class Window {
 
     public static class WindowOptions {
         public boolean compatibleProfile = false;
+        public Vector2f bufferResolution = new Vector2f(480, 270);
         public int fps = 60;
         public int ups = Engine.TARGET_UPS;
         public int width = 640;
         public int height = 480;
-        public boolean antiAliasing = true;
+        public boolean antiAliasing = false;
 
-        public WindowOptions(int width, int height) {
-            this.width = width;
-            this.height = height;
+        public WindowOptions(int width, int height, Vector2f bufferResolution) {
+            this(width, height, bufferResolution, 60, Engine.TARGET_UPS, false, false);
         }
 
-        public WindowOptions(int width, int height, int fps) {
-            this.width = width;
-            this.height = height;
-            this.fps = fps;
+        public WindowOptions(int width, int height, Vector2f bufferResolution, int fps) {
+            this(width, height, bufferResolution, fps, Engine.TARGET_UPS, false, false);
         }
 
-        public WindowOptions(int width, int height, int fps, int ups) {
-            this.width = width;
-            this.height = height;
-            this.fps = fps;
-            this.ups = ups;
+        public WindowOptions(int width, int height, Vector2f bufferResolution, int fps, int ups) {
+            this(width, height, bufferResolution, fps, ups, false, false);
         }
 
-        public WindowOptions(int width, int height, int fps, int ups, boolean compatibleProfile) {
-            this.width = width;
-            this.height = height;
-            this.fps = fps;
-            this.ups = ups;
-            this.compatibleProfile = compatibleProfile;
+        public WindowOptions(int width, int height, Vector2f bufferResolution, int fps, int ups, boolean compatibleProfile) {
+            this(width, height, bufferResolution, fps, ups, compatibleProfile, false);
         }
 
-        public WindowOptions(int width, int height, int fps, int ups, boolean compatibleProfile, boolean antiAliasing) {
+        public WindowOptions(int width, int height, Vector2f bufferResolution, int fps, int ups, boolean compatibleProfile, boolean antiAliasing) {
             this.width = width;
             this.height = height;
+            this.bufferResolution = bufferResolution;
             this.fps = fps;
             this.ups = ups;
             this.compatibleProfile = compatibleProfile;

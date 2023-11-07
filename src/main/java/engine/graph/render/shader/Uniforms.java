@@ -20,7 +20,7 @@ public class Uniforms {
 
     public void createUniform(String uniformName) {
         int uniformLocation = glGetUniformLocation(programID, uniformName);
-        if (uniformLocation < 0) throw new RuntimeException("Failed to locate uniform \"" + uniformName + "\" in shader program [" + programID + "]");
+        if (uniformLocation < 0) throw new RuntimeException("Failed to locate uniform \"" + uniformName + "\" in shader program [" + programID + "]\nLocation: " + uniformLocation);
         uniforms.put(uniformName, uniformLocation);
     }
 
@@ -30,7 +30,7 @@ public class Uniforms {
 
     private int getUniformLocation(String uniformName) {
         Integer location = uniforms.get(uniformName);
-        if (location == null) throw new RuntimeException("Failed to find uniform \"" + uniformName + "\"");
+        if (location == null) throw new RuntimeException("Failed to find uniform \"" + uniformName + "\"\nLocation: " + location);
         return location.intValue();
     }
 

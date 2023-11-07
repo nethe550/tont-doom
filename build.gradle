@@ -114,4 +114,28 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'game.Main'
+application {
+    mainClass = 'game.Main'
+}
+
+task copyResources(type: Copy) {
+    from 'resources'
+    into jar.archiveFile.get().asFile.getParent() + '/resources/'
+}
+
+jar {
+    dependsOn copyResources
+
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    manifest {
+        attributes (
+            'Main-Class' : application.mainClass,
+            'Implementation-Title' : 'tont-doom'
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
