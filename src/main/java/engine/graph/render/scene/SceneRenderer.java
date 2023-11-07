@@ -1,9 +1,10 @@
 package engine.graph.render.scene;
 
-import engine.graph.render.shader.ShaderProgram;
-import engine.graph.render.shader.Uniforms;
-import engine.graph.render.texture.Texture;
-import engine.graph.render.texture.TextureCache;
+import engine.graph.render.Renderer;
+import engine.graph.shader.ShaderProgram;
+import engine.graph.shader.Uniforms;
+import engine.graph.texture.Texture;
+import engine.graph.texture.TextureCache;
 import org.joml.*;
 
 import engine.graph.model.*;
@@ -18,31 +19,28 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class SceneRender {
+public class SceneRenderer extends Renderer {
 
     private static final int MAX_POINT_LIGHTS = 16;
     private static final int MAX_SPOT_LIGHTS = 16;
-
-    private final ShaderProgram shaderProgram;
-    private final Uniforms uniforms;
 
     private float timeElapsed = 0.0f;
     private float width = 1.0f;
     private float height = 1.0f;
 
-    public SceneRender() {
-        List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<>();
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene/scene.vs", GL_VERTEX_SHADER));
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene/scene.fs", GL_FRAGMENT_SHADER));
-        shaderProgram = new ShaderProgram(shaderModuleDataList);
+    public SceneRenderer() {
+        shaderProgram = createShaderProgram();
         uniforms = createUniforms();
     }
 
-    public void cleanup() {
-        shaderProgram.cleanup();
+    public ShaderProgram createShaderProgram() {
+        List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<>();
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene/scene.vs", GL_VERTEX_SHADER));
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("resources/shaders/scene/scene.fs", GL_FRAGMENT_SHADER));
+        return new ShaderProgram(shaderModuleDataList);
     }
 
-    private Uniforms createUniforms() {
+    public Uniforms createUniforms() {
         Uniforms u = new Uniforms(shaderProgram.getProgramID());
         u.createUniform("projectionMatrix");
         u.createUniform("viewMatrix");

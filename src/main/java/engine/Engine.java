@@ -72,13 +72,14 @@ public class Engine {
                 long diffTimeMillis = now - updateTime;
                 scene.update(diffTimeMillis);
                 appLogic.update(window, scene, diffTimeMillis);
-                render.update(window.getWidth(), window.getHeight(), diffTimeMillis);
+                render.update(diffTimeMillis, window.getWidth(), window.getHeight());
                 updateTime = now;
                 deltaUpdate--;
             }
 
             if (targetFPS <= 0 || deltaFPS >= 1) {
-                render.render(window, scene);
+                render.resize(window.getWidth(), window.getHeight());
+                render.render(scene);
                 deltaFPS--;
                 window.update();
             }

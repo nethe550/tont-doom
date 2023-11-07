@@ -1,7 +1,7 @@
 package engine.scene;
 
 import engine.graph.model.Model;
-import engine.graph.render.texture.TextureCache;
+import engine.graph.texture.TextureCache;
 import engine.scene.model.Entity;
 import engine.scene.model.ModelLoader;
 

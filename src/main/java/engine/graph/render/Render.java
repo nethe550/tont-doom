@@ -1,17 +1,20 @@
 package engine.graph.render;
 
 import engine.Window;
-import engine.graph.render.scene.SceneRender;
+import engine.graph.render.scene.SceneRenderer;
 import engine.graph.render.skybox.SkyBoxRender;
 import engine.scene.Scene;
 
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL13.*;
 
-public class Render {
+public class Render implements IRenderer {
 
-    public final SceneRender sceneRender;
+    public final SceneRenderer sceneRenderer;
     private final SkyBoxRender skyBoxRender;
+
+    private int width = 1;
+    private int height = 1;
 
     public Render() {
         GL.createCapabilities();
@@ -22,27 +25,31 @@ public class Render {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        sceneRender = new SceneRender();
+        sceneRenderer = new SceneRenderer();
         skyBoxRender = new SkyBoxRender();
     }
 
     public void cleanup() {
-        sceneRender.cleanup();
+        sceneRenderer.cleanup();
         skyBoxRender.cleanup();
     }
 
-    public void resize(int width, int height) {}
-
-    public void update(int width, int height, float diffTimeMillis) {
-        sceneRender.update(diffTimeMillis, width, height);
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
-    public void render(Window window, Scene scene) {
+    public void update(float diffTimeMillis, int width, int height) {
+        this.resize(width, height);
+        sceneRenderer.update(diffTimeMillis, width, height);
+    }
+
+    public void render(Scene scene) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, window.getWidth(), window.getHeight());
+        glViewport(0, 0, width, height);
 
         skyBoxRender.render(scene);
-        sceneRender.render(scene);
+        sceneRenderer.render(scene);
     }
 
 }

@@ -1,4 +1,4 @@
-package engine.graph.render.texture;
+package engine.graph.texture;
 
 import java.util.*;
 

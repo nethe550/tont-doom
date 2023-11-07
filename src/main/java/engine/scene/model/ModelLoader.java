@@ -7,7 +7,7 @@ import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 
 import engine.graph.model.*;
-import engine.graph.render.texture.TextureCache;
+import engine.graph.texture.TextureCache;
 import engine.util.Util;
 
 import java.io.File;
