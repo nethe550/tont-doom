@@ -26,7 +26,7 @@ public class Engine {
         targetUPS = opts.ups;
         this.appLogic = appLogic;
         this.level = level;
-        render = new Render();
+        render = new Render(window);
         this.level.load(window.getWidth(), window.getHeight());
         appLogic.init(window, this.level.getScene(), render);
         running = true;

@@ -8,6 +8,7 @@ import engine.input.*;
 import engine.scene.*;
 import engine.scene.view.*;
 import engine.scene.model.*;
+import org.joml.Vector2f;
 
 public class Main implements IAppLogic {
 
@@ -20,7 +21,7 @@ public class Main implements IAppLogic {
     public static void main(String[] args) {
         Instance = new Main();
 
-        Window.WindowOptions opts = new Window.WindowOptions(1280, 720);
+        Window.WindowOptions opts = new Window.WindowOptions(1920, 1080, new Vector2f(480, 270));
         opts.antiAliasing = true;
 
         Engine engine = new Engine("tont-doom", opts, Instance, level1);

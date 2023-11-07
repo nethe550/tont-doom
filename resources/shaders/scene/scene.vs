@@ -11,7 +11,7 @@ layout (location=4) in vec2 texcoord;
 layout (location=5) in vec4 boneWeights;
 layout (location=6) in ivec4 boneIndices;
 
-out vec3 outViewPosition;
+out vec4 outViewPosition;
 out vec4 outWorldPosition;
 out vec3 outNormal;
 out vec3 outTangent;
@@ -62,8 +62,8 @@ void main()
 
     gl_Position = projectionMatrix * mvPosition;
 
-    outViewPosition = mvPosition.xyz;
     outWorldPosition = modelMatrix * initPos;
+    outViewPosition = viewMatrix * outWorldPosition;
     outNormal = normalize(modelViewMatrix * initNormal).xyz;
     outTangent = normalize(modelViewMatrix * initTangent).xyz;
     outBitangent = normalize(modelViewMatrix * initBitangent).xyz;
